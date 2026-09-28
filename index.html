@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Illusions</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="bar">
+    <h1 class="brand">Illusions</h1>
+    <nav id="nav" class="nav" aria-label="Illusions"></nav>
+    <button id="fullscreen" class="btn" type="button" title="Fullscreen (F)">Fullscreen <kbd>F</kbd></button>
+  </header>
+
+  <main class="layout">
+    <section id="stage" class="stage" aria-live="off"></section>
+
+    <aside class="panel">
+      <p id="index" class="index"></p>
+      <h2 id="title" class="title"></h2>
+      <p id="credit" class="credit"></p>
+
+      <h3>How to view</h3>
+      <p id="howto"></p>
+
+      <h3>What happens</h3>
+      <p id="expect"></p>
+
+      <div id="controls-wrap" hidden>
+        <h3>Controls</h3>
+        <div id="controls" class="controls"></div>
+      </div>
+
+      <details id="why" class="why">
+        <summary>Why it happens</summary>
+        <div id="why-body"></div>
+      </details>
+
+      <p class="keys"><kbd>←</kbd> <kbd>→</kbd> or <kbd>1</kbd>–<kbd id="last-key">6</kbd> switch · <kbd>F</kbd> fullscreen</p>
+    </aside>
+  </main>
+
+  <script src="js/core.js"></script>
+  <script src="js/illusions/lilac.js"></script>
+  <script src="js/illusions/mib.js"></script>
+  <script src="js/illusions/spiral.js"></script>
+  <script src="js/illusions/feet.js"></script>
+  <script src="js/illusions/breathing.js"></script>
+  <script src="js/illusions/ghost-word.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
