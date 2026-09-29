@@ -11,6 +11,8 @@ Five classic motion illusions plus one new design, rendered live on `<canvas>`. 
 | 5 | Breathing Square | Meyer & Dougherty 1990; Shiffrar & Pavel 1991 | interactive: occluder opacity, gap width |
 | 6 | Ghost Word | new design built on reverse phi (Anstis 1970) | interactive: word, step rate, dot size, polarity flip, pause |
 
+See also [`twophase/`](twophase/): a simulation of the DeF Two-Phase Law.
+
 ## Run
 
 Open `index.html` directly in a browser, or serve the folder:
