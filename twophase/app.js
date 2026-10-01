@@ -97,10 +97,30 @@
       if (L.mode === 'dead') { disp.delete(L.id); continue; }
       const t = target(L, g);
       let d = disp.get(L.id);
-      if (!d) disp.set(L.id, d = { ...t });
-      d.x += (t.x - d.x) * k; d.y += (t.y - d.y) * k;
+      if (!d) disp.set(L.id, d = { ...t, level: L.level });
+      if (d.level !== L.level) {
+        // Phase change: jump straight to the new row (complexity restarts at the
+        // left edge) and leave a fading trail from where the world was.
+        d.trail = { x: d.x, y: d.y };
+        d.x = t.x; d.y = t.y; d.level = L.level;
+      } else if (L.mode === 'fast' && d.mode === 'slow') {
+        d.x = t.x;                                   // crossing into the fast column is instant too
+      } else {
+        d.x += (t.x - d.x) * k; d.y += (t.y - d.y) * k;
+      }
+      d.mode = L.mode;
 
       const r = L.id === focusId ? 5 : 3.2;
+      if (d.trail && L.flash > 0) {
+        ctx.globalAlpha = L.flash * 0.7;
+        ctx.strokeStyle = L.flashKind === 'bif' ? bif : rev;
+        ctx.lineWidth = 1.5;
+        const ty = d.y, dir = Math.sign(ty - d.trail.y);
+        ctx.beginPath(); ctx.moveTo(d.trail.x, d.trail.y); ctx.lineTo(d.trail.x, ty);
+        ctx.moveTo(d.trail.x - 4, ty - 5 * dir); ctx.lineTo(d.trail.x, ty); ctx.lineTo(d.trail.x + 4, ty - 5 * dir);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      } else d.trail = null;
       if (L.flash > 0) {
         ctx.globalAlpha = L.flash;
         ctx.fillStyle = L.flashKind === 'bif' ? bif : rev;
