@@ -1,6 +1,6 @@
 # Illusions
 
-Five classic motion illusions plus one new design, rendered live on `<canvas>`. Vanilla HTML/CSS/JS, no build step, no dependencies.
+Eight classic illusions plus one new design, rendered live on `<canvas>`. Vanilla HTML/CSS/JS, no build step, no dependencies.
 
 | # | Illusion | Source | Type |
 |---|----------|--------|------|
@@ -10,6 +10,9 @@ Five classic motion illusions plus one new design, rendered live on `<canvas>`. 
 | 4 | Stepping Feet | Anstis, 2001 | interactive: stripe contrast, speed |
 | 5 | Breathing Square | Meyer & Dougherty 1990; Shiffrar & Pavel 1991 | interactive: occluder opacity, gap width |
 | 6 | Ghost Word | new design built on reverse phi (Anstis 1970) | interactive: word, step rate, dot size, polarity flip, pause |
+| 7 | Rotating Snakes | Kitaoka 2003; Fraser & Wilcox 1979 | static image; interactive: colour, grey steps |
+| 8 | Motion Silencing | Suchow & Alvarez, 2011 | animated (3 s still / 3 s turning); interactive: rotation speed, colour change rate |
+| 9 | Checker Shadow | Adelson, 1995 | static; interactive: connecting bar, hide scene |
 
 See also [`twophase/`](twophase/): a simulation of the DeF Two-Phase Law.
 
@@ -21,7 +24,7 @@ Open `index.html` directly in a browser, or serve the folder:
 python3 -m http.server 8321
 ```
 
-Keys: `←` `→` or `1`–`6` switch, `F` fullscreen. The URL hash (`#lilac-chaser` etc.) selects an illusion.
+Keys: `←` `→` or `1`–`9` switch, `F` fullscreen. The URL hash (`#lilac-chaser` etc.) selects an illusion.
 
 ## Layout
 
