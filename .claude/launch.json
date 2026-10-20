@@ -4,8 +4,21 @@
     {
       "name": "illusions",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8321"],
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8321"
+      ],
       "port": 8321
+    },
+    {
+      "name": "illusions-alt",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "exec python3 -m http.server ${PORT:-8324}"
+      ],
+      "port": 8324
     }
   ]
 }

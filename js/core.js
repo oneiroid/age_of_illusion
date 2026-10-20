@@ -2,7 +2,9 @@
 
 /* Registry: each illusion script pushes a descriptor here.
    Descriptor: { id, title, credit, howto, expect, why: [paragraphs],
-                 mount(stage, controls) -> cleanup() } */
+                 mount(stage, controls, { reveal }) -> cleanup() }
+   Optional: section ('mind' | 'ear'; default is visual), lang ('ru'; default 'en'),
+   gated (true: "expect" and "why" stay hidden until the module calls reveal()). */
 window.ILLUSIONS = [];
 
 /* HiDPI canvas that fills `host` and tracks its size.
@@ -96,6 +98,17 @@ function addText(parent, { label, value, maxLength = 40, onInput }) {
   return input;
 }
 
+/* Button appended to `parent`. */
+function addButton(parent, { label, onClick }) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'btn';
+  b.textContent = label;
+  b.addEventListener('click', onClick);
+  parent.appendChild(b);
+  return b;
+}
+
 /* Small overlay text on the stage. */
 function addStatus(stage) {
   const el = document.createElement('div');
@@ -116,4 +129,20 @@ function rng(seed) {
     t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
+}
+
+/* DOM builder: h('p', { className: 'x', onclick: fn }, 'text', childNode, ...).
+   Null/false children are skipped; "on*" props become listeners. */
+function h(tag, props, ...children) {
+  const node = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (k.startsWith('on')) node.addEventListener(k.slice(2), v);
+    else if (k in node) node[k] = v;
+    else node.setAttribute(k, v);
+  }
+  for (const c of children.flat()) {
+    if (c == null || c === false) continue;
+    node.append(typeof c === 'object' ? c : String(c));
+  }
+  return node;
 }
