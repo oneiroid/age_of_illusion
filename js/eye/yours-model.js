@@ -1,48 +1,36 @@
 'use strict';
 
-/* For Your Eyes Only: colours, calibration estimate, cell layout, flash safety and
-   simulated observers. Pure logic, no DOM: loaded by index.html and by test/yours.test.js.
+/* For Your Eyes Only: colours, calibration estimate, cell layout and simulated
+   observers. Pure logic, no DOM: loaded by index.html and by test/yours.test.js.
 
-   Two frames alternate: A = M + d, B = M − d, with d = s · (sa, −k · sb, 0) in linear
-   light. Their time average is M whatever k is. An observer whose luminance weights red
-   and green as w_r : w_g sees no luminance flicker when w_r · sa = w_g · k · sb, so with
-   sa = sb the flicker vanishes at k = w_r / w_g: that observer's null point. */
+   Two frames alternate: A = M + d, B = M − d, with d = c · R · (sa, −k · sb, 0) in
+   linear light. Their time average is M whatever k is. An observer whose luminance
+   weights red and green as w_r : w_g sees no luminance flicker when w_r · sa = w_g · k · sb,
+   so with sa = sb the flicker vanishes at k = w_r / w_g: that observer's null point.
+   Red swings over the whole range and there is no blue, so the luminance flicker that
+   everyone else sees is as large as the screen allows. */
 
 const FY = {
-  M: [0.40, 0.30, 0.08],      // mean colour, linear sRGB
-  S: 0.30,                    // red half-amplitude, linear
+  R: 0.5,                     // red mean and half-amplitude: red runs 0 ↔ 1
+  FLOOR: 0.004,               // green stays just above 0, so dithering isn't clipped
   STD_K: 0.2126 / 0.7152,     // the sRGB (CIE 1924) observer's null
-  K_MIN: 0.15, K_MAX: 0.50,   // calibration range; flash-safe throughout (see fyFlash)
-  LEVELS: 10, Q: 0.92,        // amplitude levels of the cells mode: CELL · Q^j, j < LEVELS
-  CELL: 0.85,                 // keeps every cells-mode pair below the flash threshold
+  K_MIN: 0.10, K_MAX: 0.90,   // calibration range
+  LEVELS: 10, Q: 0.92,        // amplitude levels of the cells mode: Q^j, j < LEVELS
   OFFSETS: [1, 2],            // |a − b| of background cells, in levels
-  W_B: 0.0722 / 0.7152,       // blue weight relative to green, standard observer
 };
 
 const fyEncode = x => (x <= 0.0031308 ? 12.92 * x : 1.055 * Math.pow(x, 1 / 2.4) - 0.055);
 const fyDecode = v => (v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
 
-/* Linear colours of the two frames for null ratio k, red scale sa, green scale sb. */
-function fyPair(k, sa = 1, sb = sa) {
-  const d = [FY.S * sa, -FY.S * k * sb, 0];
-  return { A: FY.M.map((v, i) => v + d[i]), B: FY.M.map((v, i) => v - d[i]), d };
-}
+/* Mean colour for key k: green just high enough to swing by the full ±R·k. A darker
+   mean makes the same luminance swing a larger relative flicker for everyone else. */
+const fyMean = k => [FY.R, FY.R * k + FY.FLOOR, 0];
 
-/* WCAG 2.x flash test for one alternation (relative luminance of the standard observer;
-   R, G, B linear as in its relative-luminance definition). A pair is a general flash if
-   luminance changes by ≥ 0.1 (darker below 0.8), a red flash if either colour is
-   saturated red (R / (R+G+B) ≥ 0.8) with a large enough red change. */
-function fyFlash(A, B) {
-  const Y = c => 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
-  const red = c => c[0] / (c[0] + c[1] + c[2]);
-  const dY = Math.abs(Y(A) - Y(B));
-  const redA = red(A), redB = red(B);
-  const dRed = Math.abs((A[0] - A[1] - A[2]) - (B[0] - B[1] - B[2])) * 320;
-  return {
-    dY, redMax: Math.max(redA, redB),
-    general: dY >= 0.1 && Math.min(Y(A), Y(B)) < 0.8,
-    red: Math.max(redA, redB) >= 0.8 && dRed > 20,
-  };
+/* Linear colours of the two frames for key k, red scale sa, green scale sb, contrast c. */
+function fyPair(k, sa = 1, sb = sa, c = 1) {
+  const M = fyMean(k);
+  const d = [FY.R * c * sa, -FY.R * c * k * sb, 0];
+  return { A: M.map((v, i) => v + d[i]), B: M.map((v, i) => v - d[i]), M, d };
 }
 
 /* Calibration: settings are log10 k. Median, spread in dex and as a percentage. */
@@ -79,15 +67,14 @@ function fyCells(mask, rand = Math.random) {
   return cells;
 }
 
-const fyLevel = j => FY.CELL * FY.Q ** j;
+const fyLevel = j => FY.Q ** j;
 
 /* Flicker an observer with null kObs sees in a cell keyed to kKey: Michelson contrast
    of luminance between the two frames. */
-function fyContrast(kObs, kKey, sa = 1, sb = sa) {
-  const { d } = fyPair(kKey, sa, sb);
-  const w = [kObs, 1, FY.W_B];
-  const dot = c => w[0] * c[0] + w[1] * c[1] + w[2] * c[2];
-  return Math.abs(dot(d)) / dot(FY.M);
+function fyContrast(kObs, kKey, sa = 1, sb = sa, c = 1) {
+  const { d, M } = fyPair(kKey, sa, sb, c);
+  const dot = v => kObs * v[0] + v[1];
+  return Math.abs(dot(d)) / dot(M);
 }
 
 /* How well flicker alone separates letter cells from background for an observer:
@@ -119,6 +106,6 @@ function fyWord(used = [], rand = Math.random) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { FY, FY_WORDS, fyEncode, fyDecode, fyPair, fyFlash, fyEstimate, fyCellPairs, fyCells, fyLevel,
+  module.exports = { FY, FY_WORDS, fyEncode, fyDecode, fyMean, fyPair, fyEstimate, fyCellPairs, fyCells, fyLevel,
     fyContrast, fySeparability, fyWord };
 }

@@ -13,7 +13,7 @@ Eight classic illusions plus two new designs, rendered live on `<canvas>`. Vanil
 | 7 | Rotating Snakes | Kitaoka 2003; Fraser & Wilcox 1979 | static image; interactive: colour, grey steps |
 | 8 | Motion Silencing | Suchow & Alvarez, 2011 | animated (3 s still / 3 s turning); interactive: rotation speed, colour change rate |
 | 9 | Checker Shadow | Adelson, 1995 | static; interactive: connecting bar, hide scene |
-| 10 | For Your Eyes Only | new design on flicker photometry (Ives 1912) and individual cone ratios (Hofer et al. 2005) | gated; calibrate the red–green balance at which 15 Hz flicker vanishes for you, then a word in every frame that you don't see, and a word only you can read. Flicker only while a key is held; flash-safe by WCAG 2.x at every reachable setting |
+| 10 | For Your Eyes Only | new design on flicker photometry (Ives 1912) and individual cone ratios (Hofer et al. 2005) | gated; calibrate the red–green balance at which 15 Hz flicker vanishes for you, then a word in every frame that you don't see, and a word only you can read. Full-range red–green flicker (no photosensitivity limits), Space pauses; interactive: contrast, frames per colour; the setting is saved per screen |
 
 ### Разум (Mind, in Russian)
 
@@ -43,9 +43,9 @@ Keys: `←` `→` or `1`–`9` switch, `F` fullscreen. The URL hash (`#lilac-cha
 - `js/core.js` — registry, HiDPI canvas, animation loop, slider helper
 - `js/illusions/*.js` — one file per illusion; each pushes `{ id, title, credit, howto, expect, why, mount(stage, controls) }` onto `ILLUSIONS` and returns a cleanup function from `mount`
   (optional `section`, `lang`, `gated`; see the comment in `core.js`)
-- `js/mind/*.js` — models behind the Mind demos; `js/eye/yours-model.js` — colours, calibration, cells and flash checks for For Your Eyes Only
+- `js/mind/*.js` — models behind the Mind demos; `js/eye/yours-model.js` — colours, calibration, cells and simulated observers for For Your Eyes Only
 - `test/` — `ninety.test.js` (Девяносто процентов: parsing, scoring), `who.test.js` (Кто начал?: glitches, blame tracing, records),
-  `principle.test.js` (Твой принцип: case pairs, rule fitting, challenges), `yours.test.js` (For Your Eyes Only: flash safety at every setting, mean colour, cell statistics, simulated observers). Oracle checks: `oracle.test.js` (assertions), `oracle-bench.js` (simulated players),
+  `principle.test.js` (Твой принцип: case pairs, rule fitting, challenges), `yours.test.js` (For Your Eyes Only: gamut and mean colour at every setting, cell statistics, simulated observers). Oracle checks: `oracle.test.js` (assertions), `oracle-bench.js` (simulated players),
   `oracle-real.js` (real people; needs the converted data of Guseva et al. 2023, [osf.io/z8rjx](https://osf.io/z8rjx/), CC BY 4.0).
   The model's population prior was fitted on even-numbered participants; `oracle-real.js` scores odd ones.
 - `js/app.js` — navigation and panel

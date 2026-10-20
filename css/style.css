@@ -498,8 +498,8 @@ kbd {
 .fy-row[hidden] { display: none; }
 .fy-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin: 0 0 10px; }
 .fy-row .btn { padding: 10px 14px; font-size: 14px; }
-.fy-hold { touch-action: none; user-select: none; -webkit-user-select: none; }
-.fy-hold.down { background: var(--accent); border-color: var(--accent); color: #111; }
+.fy-view { cursor: pointer; }
+.fy-play.on { background: var(--accent); border-color: var(--accent); color: #111; }
 .fy-slider { width: min(460px, 100%); accent-color: var(--accent); }
 .fy-label { color: var(--muted); font-size: 13px; }
 .fy-msg { min-width: 10em; color: var(--muted); font-size: 13px; text-align: left; }

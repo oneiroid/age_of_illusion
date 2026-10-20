@@ -5,21 +5,20 @@ ILLUSIONS.push({
   gated: true,
   title: 'For Your Eyes Only',
   credit: 'New design for this app, 2026 · flicker photometry (Ives, 1912); individual cone ratios (Hofer et al., 2005)',
-  howto: 'Red and green flicker at about 15 Hz, only while you hold Space or the Hold button; skip this if flicker is a problem for you. First you find the setting at which the flicker disappears for your eyes, which takes about two minutes. Sit at your usual distance and keep the screen brightness fixed. It is better with a second person nearby.',
+  howto: 'Red and green flicker at about 15 Hz; Space or a tap pauses it. First you find the setting at which the flicker disappears for your eyes, which takes about two minutes. The setting belongs to your eyes and this screen: redo it on another monitor, or after changing the colour profile or turning Night Shift, True Tone or night light on or off. Sit at your usual distance. It is better with a second person nearby.',
   expect: 'At your own setting the word disappeared into an even colour, though it is in every frame: the frozen frame, a screenshot or a camera shows it plainly. Someone whose eyes weigh red and green differently sees the letters shimmer. In the second mode it is the other way round: for your eyes the letters are the only still cells; for anyone else they are lost among cells that happen to be still for them.',
   why: [
     'Two frames alternate about 15 times a second. Inside the letters one frame is reddish and the other greenish. The background is a fine checkerboard of the same two colours swapping places, so every pixel goes through the same changes and the time average is the same everywhere. Colour vision cannot follow red–green alternation this fast and fuses it into the average; brightness vision can, up to about 50–60 Hz. So if the reddish and the greenish frame are equally bright for you, nothing is left to see.',
-    'The calibration found that balance. It is heterochromatic flicker photometry, the method behind the luminance curve V(λ) of 1924, and so behind the weights your screen uses for brightness, Y = 0.2126 R + 0.7152 G + 0.0722 B. The balance is personal: people with normal colour vision differ several-fold in the ratio of L to M cones (Hofer et al., 2005), and the setting where flicker disappears varies between people about five times more than between repeated settings by one person (He et al., 2021). For someone 10% away from you the letters flicker at about 2% contrast.',
+    'The calibration found that balance. It is heterochromatic flicker photometry, the method behind the luminance curve V(λ) of 1924, and so behind the weights your screen uses for brightness, Y = 0.2126 R + 0.7152 G + 0.0722 B. The balance is personal: people with normal colour vision differ several-fold in the ratio of L to M cones (Hofer et al., 2005), and the setting where flicker disappears varies between people about five times more than between repeated settings by one person (He et al., 2021). For someone 10% away from you the letters flicker at about 5% contrast. Red swings over the whole range of the screen and there is no blue, which makes that flicker as large as the screen allows; Contrast in the controls turns it down.',
     'Each frame on its own contains the word in plain colour, which is why a screenshot or a camera with a short exposure shows it. It is the inverse of Ghost Word, where the word is in no frame and exists only in motion.',
     'In the second mode every cell alternates between two colours. In the background the red and green amplitudes of a cell differ by 8 or 16%; in the letters they are equal. For your eyes the letters are the only still cells. For someone else other, scattered cells are still, and the letters flicker about as much as the background. In a model observer the letters stop standing out once two people differ by about 10%, while someone within 2% of you sees them as well as you do. Red and green levels are distributed alike inside and outside the letters, but the cipher only resists eyes: a computer comparing two consecutive frames reads it at once.',
-    'By the WCAG 2.x definitions this alternation is not a flash: for the standard observer luminance changes by less than 0.1 and no colour is saturated red, at every setting the calibration can reach (checked in test/yours.test.js). The flicker runs only while you hold the key.',
-    'This is a new design, not a replication. It depends on the screen keeping a steady frame rate (a dropped frame is a brief flash of brightness that everyone sees; the count is in the corner), on how the display handles rapid changes, and on how far apart two people’s settings are. lab/flicker-probe.html measures a screen’s frame timing. The percentages against the standard observer assume that the screen shows sRGB colours accurately.',
+    'This is a new design, not a replication. It depends on the screen keeping a steady frame rate (a dropped frame is a brief flash of brightness that everyone sees; the count is in the corner), on how the display handles rapid changes, and on how far apart two people’s settings are. lab/flicker-probe.html measures a screen’s frame timing. The setting is the balance of this screen’s red and green for your eyes, so it changes with the monitor and its colour profile; the percentages against the standard observer assume that the screen shows sRGB colours accurately.',
   ],
 
   mount(stage, controls, { reveal }) {
     const N_CAL = 6, MORE = 4, MAX_PCT = 3, TRIES = 3;
     const CELL = 10;                         // cells-mode cell, CSS px
-    const SAVE = 'fyeo-key';
+    const SAVE = 'fyeo-keys';                // saved settings, one per screen
     const LOG_MIN = Math.log10(FY.K_MIN), LOG_MAX = Math.log10(FY.K_MAX), LOG_STD = Math.log10(FY.STD_K);
     const rand = Math.random;
 
@@ -38,8 +37,8 @@ ILLUSIONS.push({
     { const r = rng(7); for (let i = 0; i < DITHER.length; i++) DITHER[i] = r() - 0.5; }
 
     let W = 0, H = 0, scene = null, dirty = false;
-    let mode = 'rest';                       // 'rest' | 'frame': what shows while not holding
-    let keyHold = false, ptrHold = false, shown = null;
+    let paused = false, shown = null;       // paused shows the fused image, or frame A in 'frame'
+    let contrast = 1, userHalf = false, halfInput = null;
     let raf, last = 0, frames = 0, drops = 0;
     const intervals = [];
     let period = 1000 / 60, half = 2;
@@ -109,7 +108,7 @@ ILLUSIONS.push({
       const mask = shapeMask();
 
       if (scene.kind !== 'cells') {
-        const { A, B } = fyPair(scene.k);
+        const { A, B } = fyPair(scene.k, 1, 1, contrast);
         const eA = enc(A), eB = enc(B);
         const [rA, rB, aA, aB, bA, bB] = [[eA, 0], [eB, 0], [eA, 21845], [eB, 21845], [eA, 43690], [eB, 43690]]
           .map(([e, off]) => tile(e, off));
@@ -137,7 +136,7 @@ ILLUSIONS.push({
         }
         const cells = fyCells(cm, rng(scene.seed));
         const cA = cells.map(c => {
-          const { A, B } = fyPair(scene.k, fyLevel(c.a), fyLevel(c.b));
+          const { A, B } = fyPair(scene.k, fyLevel(c.a), fyLevel(c.b), contrast);
           return c.phase > 0 ? [enc(A), enc(B)] : [enc(B), enc(A)];
         });
         for (let y = 0; y < H; y++) {
@@ -156,8 +155,6 @@ ILLUSIONS.push({
 
     /* ---------- frame loop ---------- */
 
-    const holding = () => keyHold || ptrHold;
-
     function tick(now) {
       raf = requestAnimationFrame(tick);
       const dt = last ? now - last : 0;
@@ -167,13 +164,17 @@ ILLUSIONS.push({
         if (intervals.length === 90) {
           const s = intervals.slice(30).sort((x, y) => x - y);
           period = s[s.length >> 1];
-          half = Math.max(1, Math.round(1000 / period / 30));
+          if (!userHalf) {
+            half = Math.max(1, Math.round(1000 / period / 30));
+            halfInput.value = half;
+            halfInput.dispatchEvent(new Event('input'));
+          }
         }
       }
       if (dirty) paint();
 
-      let which = mode === 'frame' ? 'a' : 'rest';
-      if (holding() && scene) {
+      let which = phase === 'frame' ? 'a' : 'rest';
+      if (!paused && scene) {
         if (dt > period * 1.5) drops++;
         if (cal && phase === 'cal') cal.held += dt;
         frames++;
@@ -193,28 +194,14 @@ ILLUSIONS.push({
 
     /* ---------- input ---------- */
 
-    function markHold() {
-      root.querySelectorAll('.fy-hold').forEach(b => b.classList.toggle('down', holding()));
-    }
-
-    function holdable(el) {
-      el.addEventListener('pointerdown', e => {
-        if (e.button) return;
-        ptrHold = true;
-        el.setPointerCapture?.(e.pointerId);
-        e.preventDefault();
-        markHold();
+    function setPaused(v) {
+      paused = v;
+      root.querySelectorAll('.fy-play').forEach(b => {
+        b.classList.toggle('on', paused);
+        b.firstChild.textContent = paused ? 'Play ' : 'Pause ';
       });
-      for (const t of ['pointerup', 'pointercancel', 'lostpointercapture']) {
-        el.addEventListener(t, () => { ptrHold = false; markHold(); });
-      }
     }
-    holdable(view);
-
-    const release = () => { keyHold = ptrHold = false; markHold(); };
-    const onVis = () => { if (document.hidden) release(); };
-    window.addEventListener('blur', release);
-    document.addEventListener('visibilitychange', onVis);
+    view.addEventListener('click', () => setPaused(!paused));
 
     function onKey(e) {
       if (e.altKey || e.ctrlKey || e.metaKey) return;
@@ -222,8 +209,7 @@ ILLUSIONS.push({
       if (e.code === 'Space' && !typing) {
         e.preventDefault();
         e.stopPropagation();
-        keyHold = e.type === 'keydown';
-        markHold();
+        if (e.type === 'keydown' && !e.repeat) setPaused(!paused);
         return;
       }
       if (e.type !== 'keydown' || typing || phase !== 'cal') return;
@@ -249,27 +235,37 @@ ILLUSIONS.push({
     const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
     const pct = v => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(1) + '%';
     const vsStd = k => (k / FY.STD_K - 1) * 100;
-    const holdBtn = '<button type="button" class="btn fy-hold">Hold to flicker <kbd>Space</kbd></button>';
+    const playBtn = '<button type="button" class="btn fy-play">Pause <kbd>Space</kbd></button>';
 
     function setBar(html) {
       bar.innerHTML = html;
-      bar.querySelectorAll('.fy-hold').forEach(holdable);
-      markHold();
+      bar.querySelectorAll('.fy-play').forEach(b => b.addEventListener('click', () => setPaused(!paused)));
+      setPaused(paused);
       if (document.activeElement && document.activeElement !== document.body && !bar.contains(document.activeElement)) {
         document.activeElement.blur();
       }
     }
 
+    // A setting only holds for the screen it was made on; this is as close as a page
+    // gets to naming that screen.
+    const screenId = () => `${screen.width}×${screen.height} @${window.devicePixelRatio || 1}x ` +
+      (matchMedia('(color-gamut: p3)').matches ? 'wide gamut' : 'sRGB');
     function readSaved() {
-      try { const s = JSON.parse(localStorage.getItem(SAVE)); return s && s.k >= FY.K_MIN && s.k <= FY.K_MAX ? s : null; }
-      catch (e) { return null; }
+      try {
+        const s = (JSON.parse(localStorage.getItem(SAVE)) || {})[screenId()];
+        return s && s.k >= FY.K_MIN && s.k <= FY.K_MAX ? s : null;
+      } catch (e) { return null; }
     }
     function save(key) {
-      try { localStorage.setItem(SAVE, JSON.stringify({ k: key.k, pct: key.pct, t: Date.now() })); } catch (e) { /* storage unavailable */ }
+      try {
+        const all = JSON.parse(localStorage.getItem(SAVE)) || {};
+        all[screenId()] = { k: key.k, pct: key.pct, t: Date.now() };
+        localStorage.setItem(SAVE, JSON.stringify(all));
+      } catch (e) { /* storage unavailable */ }
     }
 
     function start() {
-      release();
+      paused = false;
       keys = { you: null, friend: null };
       cal = null;
       used = [];
@@ -277,7 +273,6 @@ ILLUSIONS.push({
       answers = {};
       stdKey = false;
       scene = null;
-      mode = 'rest';
       phase = 'intro';
       for (const c of Object.values(cvs)) c.getContext('2d').clearRect(0, 0, c.width, c.height);
       render();
@@ -301,10 +296,10 @@ ILLUSIONS.push({
       setBar(
         `<p class="mind-step">For your eyes only</p>
          <p class="fy-big">First, find the setting at which flicker disappears for your eyes.</p>
-         <p class="mind-sub">A disc will flicker red and green while you hold Space or the Hold button. Move the slider until the flicker is weakest, six times over. Flicker runs only while you hold. Skip this if flicker is a problem for you.</p>
+         <p class="mind-sub">A disc flickers red and green. Move the slider until the flicker is weakest, six times over. The setting belongs to your eyes and this screen (${screenId()}): redo it on another monitor, or after changing the colour profile or a night mode.</p>
          <div class="fy-row">
            <button type="button" class="btn btn-primary fy-go">Start calibration</button>
-           ${saved ? `<button type="button" class="btn fy-saved">Use my saved setting (${new Date(saved.t).toLocaleDateString()})</button>` : ''}
+           ${saved ? `<button type="button" class="btn fy-saved">Use the setting saved on this screen (${new Date(saved.t).toLocaleDateString()})</button>` : ''}
          </div>`);
       bar.querySelector('.fy-go').addEventListener('click', () => startCal('you'));
       bar.querySelector('.fy-saved')?.addEventListener('click', () => {
@@ -327,6 +322,7 @@ ILLUSIONS.push({
       cal.flip = rand() < 0.5;
       cal.held = 0;
       setScene({ kind: 'patch', k: 10 ** cal.logk });
+      paused = false;
       phase = 'cal';
       render();
     }
@@ -339,9 +335,9 @@ ILLUSIONS.push({
       const v = toSlider(cal.logk);
       setBar(
         `<p class="mind-step">Calibration${cal.who === 'friend' ? ' for your friend' : ''} · setting ${t + 1} of ${cal.n}</p>
-         <p class="mind-sub">Hold, look at the middle of the disc, and move the slider (or <kbd>←</kbd> <kbd>→</kbd>, with Shift for big steps) until the flicker is weakest. The colour doesn’t matter, only the shimmer. At the right point the disc may vanish altogether.</p>
+         <p class="mind-sub">Look at the middle of the disc and move the slider (or <kbd>←</kbd> <kbd>→</kbd>, with Shift for big steps) until the flicker is weakest. The colour doesn’t matter, only the shimmer. At the right point the disc may vanish altogether.</p>
          <div class="fy-row">
-           ${holdBtn}
+           ${playBtn}
            <input class="fy-slider" type="range" min="0" max="1000" step="1" value="${cal.flip ? 1000 - v : v}" aria-label="Red–green balance">
            <button type="button" class="btn btn-primary fy-confirm" disabled>Weakest here <kbd>Enter</kbd></button>
          </div>`);
@@ -386,9 +382,8 @@ ILLUSIONS.push({
     }
 
     function toSee() {
-      release();
       setScene({ kind: 'word', k: keys.you.k, word: newWord('see') });
-      mode = 'rest';
+      paused = false;
       phase = 'see';
       render();
     }
@@ -396,10 +391,10 @@ ILLUSIONS.push({
     function renderSee() {
       setBar(
         `<p class="mind-step">1 · Look</p>
-         <p class="fy-big">Hold and look at the screen. What do you see?</p>
+         <p class="fy-big">Look at the screen. What do you see?</p>
          <p class="mind-sub">Look anywhere; take your time.</p>
          <div class="fy-row">
-           ${holdBtn}
+           ${playBtn}
            <button type="button" class="btn fy-ans" data-a="nothing">An even colour</button>
            <button type="button" class="btn fy-ans" data-a="shimmer">Something shimmers</button>
            <button type="button" class="btn fy-ans" data-a="read">I can read a word</button>
@@ -420,8 +415,7 @@ ILLUSIONS.push({
     }
 
     function toFrame() {
-      release();
-      mode = 'frame';
+      paused = true;
       phase = 'frame';
       reveal();
       render();
@@ -441,11 +435,11 @@ ILLUSIONS.push({
         `<p class="mind-step">2 · One frame</p>
          <p class="fy-big">This is a single frame of what was on the screen.</p>
          <p class="mind-sub">${seeSummary()} The word is in every frame; a screenshot captures it, and so may a phone camera with a short exposure. Averaged over time with your eyes’ balance of red and green, it is an even colour.</p>
-         <p class="mind-sub">Hold, and show someone next to you: do they see the letters shimmer?${stdKey
+         <p class="mind-sub">Press Play and show someone next to you: do they see the letters shimmer?${stdKey
            ? ' Now keyed to the standard observer behind sRGB, ' + pct((FY.STD_K / keys.you.k - 1) * 100) + ' from your setting: if that gap is more than a few percent, you see the letters too.'
            : ''}</p>
          <div class="fy-row">
-           ${holdBtn}
+           ${playBtn}
            <button type="button" class="btn fy-key">${stdKey ? 'Key it to my eyes' : 'Key it to the standard observer'}</button>
            <button type="button" class="btn btn-primary fy-next">Next: the opposite</button>
          </div>`);
@@ -455,8 +449,7 @@ ILLUSIONS.push({
         render();
       });
       bar.querySelector('.fy-next').addEventListener('click', () => {
-        release();
-        mode = 'rest';
+        paused = false;
         setScene({ kind: 'cells', k: keys.you.k, word: newWord('only'), seed: 1 + Math.floor(rand() * 1e9) });
         tries = 0;
         phase = 'only';
@@ -503,7 +496,7 @@ ILLUSIONS.push({
         tail = formHtml('fy-you', 'You read:');
       } else if (!friend) {
         tail =
-          `<p class="mind-sub">${you.ok ? 'Don’t say the word. ' : ''}Now ask someone who hasn’t calibrated to hold and read it.</p>
+          `<p class="mind-sub">${you.ok ? 'Don’t say the word. ' : ''}Now ask someone who hasn’t calibrated to read it.</p>
            ${formHtml('fy-friend', 'They read:')}
            <div class="fy-row"><button type="button" class="btn fy-skip">No one around: finish</button></div>`;
       } else {
@@ -517,18 +510,17 @@ ILLUSIONS.push({
       setBar(
         `<p class="mind-step">3 · Only for you</p>
          <p class="fy-big">Every cell flickers, except those of a word that is still only for your eyes.</p>
-         <p class="mind-sub">Hold and look for the still letters.${you ? ' Your result: ' + verdict(you, friend ? words.only : null) : ''}</p>
-         <div class="fy-row">${holdBtn}</div>
+         <p class="mind-sub">Look for the still letters.${you ? ' Your result: ' + verdict(you, friend ? words.only : null) : ''}</p>
+         <div class="fy-row">${playBtn}</div>
          ${tail}`);
       if (!you) guessForm('.fy-you', words.only, TRIES, (ok, n) => { answers.only = { ok, n }; render(); });
       else if (!friend) guessForm('.fy-friend', words.only, TRIES, (ok, n) => { answers.onlyFriend = { ok, n }; render(); });
       bar.querySelector('.fy-skip')?.addEventListener('click', () => { phase = 'end'; render(); });
-      bar.querySelector('.fy-fcal')?.addEventListener('click', () => { release(); startCal('friend'); });
+      bar.querySelector('.fy-fcal')?.addEventListener('click', () => startCal('friend'));
     }
 
     function toSwap() {
-      release();
-      mode = 'rest';
+      paused = false;
       setScene({ kind: 'cells', k: keys.friend.k, word: newWord('swap'), seed: 1 + Math.floor(rand() * 1e9) });
       phase = 'swap';
       render();
@@ -544,8 +536,8 @@ ILLUSIONS.push({
       setBar(
         `<p class="mind-step">4 · Swapped</p>
          <p class="fy-big">Now the word is keyed to your friend’s eyes.</p>
-         <p class="mind-sub">They hold and read first; then you.</p>
-         <div class="fy-row">${holdBtn}</div>
+         <p class="mind-sub">They read first; then you.</p>
+         <div class="fy-row">${playBtn}</div>
          ${tail}`);
       if (!friend) guessForm('.fy-friend', words.swap, TRIES, (ok, n) => { answers.swapFriend = { ok, n }; render(); });
       else if (!you) guessForm('.fy-you', words.swap, TRIES, (ok, n) => { answers.swap = { ok, n }; render(); });
@@ -553,8 +545,6 @@ ILLUSIONS.push({
     }
 
     function renderEnd() {
-      release();
-      mode = 'rest';
       setScene(null);
       for (const c of Object.values(cvs)) c.getContext('2d').clearRect(0, 0, c.width, c.height);
       const y = keys.you, f = keys.friend;
@@ -586,6 +576,18 @@ ILLUSIONS.push({
       bar.querySelector('.fy-again').addEventListener('click', start);
     }
 
+    addSlider(controls, {
+      label: 'Contrast', min: 20, max: 100, step: 5, value: 100,
+      format: v => v + '%',
+      onInput: v => { contrast = v / 100; dirty = true; },
+    });
+    // Set from the measured refresh rate until the user moves it.
+    halfInput = addSlider(controls, {
+      label: 'Frames per colour', min: 1, max: 6, value: half,
+      format: v => `${v} · ${Math.round(1000 / period / (2 * v))} Hz`,
+      onInput: v => { half = v; },
+    });
+    halfInput.addEventListener('input', e => { if (e.isTrusted) userHalf = true; });
     addButton(controls, { label: 'Start over', onClick: start });
     start();
 
@@ -594,8 +596,6 @@ ILLUSIONS.push({
       ro.disconnect();
       window.removeEventListener('keydown', onKey, true);
       window.removeEventListener('keyup', onKey, true);
-      window.removeEventListener('blur', release);
-      document.removeEventListener('visibilitychange', onVis);
       status.remove();
       root.remove();
     };
