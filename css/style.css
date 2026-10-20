@@ -269,6 +269,115 @@ kbd {
   .ninety-fields { grid-template-columns: 1fr; }
 }
 
+/* Кто начал? */
+
+.who-pay { margin-bottom: 4px; font-size: 14px; }
+.who-pay td:nth-child(2) { font-weight: 400; color: var(--text); }
+.who-line { margin: 0 0 6px; text-align: left; }
+.who-story { margin: 0 0 8px; text-align: left; font-size: 16px; }
+
+.who-moves { display: flex; justify-content: center; gap: 16px; margin: 24px 0 10px; }
+
+.who-btn {
+  width: 190px;
+  padding: 18px 10px;
+  border: 0;
+  border-radius: 12px;
+  color: #111;
+  font: 600 18px/1 var(--sans);
+  cursor: pointer;
+  transition: transform 60ms;
+}
+
+.who-btn small { display: block; margin-top: 6px; font-size: 13px; opacity: 0.55; }
+.who-btn.c { background: #8fc28a; }
+.who-btn.d { background: #e88a87; }
+.who-btn.down, .who-btn:active { transform: scale(0.96); }
+.who-last { min-height: 1.55em; margin: 0 0 16px; color: var(--muted); }
+
+.who-hist {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 10px;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto 8px;
+  text-align: left;
+}
+
+.who-hist > span { color: var(--muted); font-size: 13px; white-space: nowrap; }
+.who-hist > div { display: flex; gap: 2px; min-height: 14px; }
+.who-hist.rec, .who-hist.log { max-width: 100%; }
+.who-hist.rec > div, .who-hist.log > div { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 14px)); gap: 2px; }
+.who-hist.rec .who-mv, .who-hist.log .who-mv { width: auto; }
+
+.who-nums b { color: var(--muted); font: 500 10px/1 var(--sans); font-variant-numeric: tabular-nums; }
+
+.who-mv { display: inline-block; width: 14px; height: 14px; border-radius: 3px; }
+.who-mv.c { background: #8fc28a; }
+.who-mv.d { background: #e88a87; }
+.who-mv.glitch { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.who-legend { display: flex; justify-content: center; align-items: center; gap: 6px 8px; flex-wrap: wrap; margin: 6px 0 14px; color: var(--muted); font-size: 13px; }
+.who-legend .who-mv { margin-left: 10px; }
+
+.who-scale { display: flex; justify-content: center; gap: 4px; }
+.who-scale .btn { width: 38px; padding: 9px 0; font-variant-numeric: tabular-nums; }
+.who-scale-ends { display: flex; justify-content: space-between; max-width: 450px; margin: 4px auto 0; color: var(--muted); font-size: 12px; }
+.who-choice { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.who-choice .btn { min-width: 100px; padding: 10px 14px; font-size: 14px; }
+.who-scale .btn.on, .who-choice .btn.on { background: var(--accent); border-color: var(--accent); color: #111; }
+.who-cmp { margin: 14px auto 10px; }
+.who-cmp td:nth-child(3) { color: var(--text); font-weight: 600; }
+
+/* Твой принцип */
+
+.pr-rules { display: grid; gap: 8px; text-align: left; }
+
+.pr-rule {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg-2);
+  color: var(--text);
+  font: 14px/1.45 var(--sans);
+  text-align: left;
+  cursor: pointer;
+}
+
+.pr-rule:hover { border-color: #44444b; }
+.pr-rule.on { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.pr-rule b { display: block; margin-bottom: 2px; }
+.pr-rule span { color: #cfccc5; }
+.pr-rule small { display: block; margin-top: 4px; color: var(--accent); font-size: 12px; }
+.pr-none { margin-top: 8px; }
+
+.pr-text { margin: 18px 0 14px; text-align: left; font: 18px/1.6 var(--serif); }
+.pr-q { margin: 0 0 20px; font-weight: 600; }
+.pr-yn { display: flex; justify-content: center; gap: 12px; }
+.pr-yn .btn { min-width: 160px; padding: 13px 16px; font-size: 15px; }
+.pr-yn kbd { margin-left: 10px; }
+
+.pr-table { margin-top: 6px; }
+.pr-table td { text-align: left; }
+.pr-table td:nth-child(2) { font-weight: 600; }
+.pr-table tr.bad td { color: #e88a87; }
+.pr-table tr.bad td:first-child { box-shadow: inset 3px 0 0 #d0605e; }
+
+.pr-fit { margin: 0 0 10px; text-align: left; }
+.pr-fit b { display: inline-block; min-width: 64px; color: var(--accent); font-variant-numeric: tabular-nums; }
+.pr-fit span { display: block; margin-left: 68px; color: var(--muted); font-size: 13px; }
+.pr-fit.mine { color: var(--text); }
+
+.pr-pair { margin: 0 0 8px; padding-left: 12px; text-align: left; border-left: 3px solid var(--line); }
+.pr-pair.diff { border-left-color: var(--accent); }
+.pr-pair b { font-weight: 500; color: var(--muted); }
+.pr-pair.diff b { color: var(--text); }
+.pr-actions { display: flex; justify-content: center; gap: 12px; }
+
 /* ---------- side panel ---------- */
 
 .panel {
