@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flicker probe</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    body { padding: 24px; }
+    main { max-width: 760px; margin: 0 auto; }
+    h1 { font: 600 24px/1.2 var(--serif); }
+    .swap { position: relative; height: 140px; margin: 18px 0; border: 1px solid var(--line); }
+    .swap canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+    #hist { width: 100%; height: 160px; display: block; border: 1px solid var(--line); }
+    #out { font-variant-numeric: tabular-nums; }
+    .ok { color: #8fc98f; } .bad { color: #e88a87; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Flicker probe</h1>
+  <p>For Your Eyes Only alternates two pre-drawn frames with every screen refresh. A dropped or repeated frame makes one colour last longer than the other: a brief flash of brightness that everyone sees.
+     This page swaps two identical grey layers the same way for 10 seconds and records the time between frames. Nothing visible flickers.
+     Keep the tab in front and the mouse still while it runs.</p>
+  <p><button id="run" class="btn btn-primary" type="button">Run for 10 s</button> <span id="state"></span></p>
+  <div class="swap"><canvas id="c0"></canvas><canvas id="c1"></canvas></div>
+  <canvas id="hist"></canvas>
+  <div id="out"></div>
+  <p class="mind-note">Go / no-go from the plan: fewer than 1 dropped frame per 200. Then calibrate on this screen and check by eye that the word disappears at 50 cm.
+     <a href="../#for-your-eyes-only">Back to the demo</a>.</p>
+</main>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const layers = [$('c0'), $('c1')];
+for (const c of layers) {
+  c.width = 4; c.height = 4;
+  const g = c.getContext('2d');
+  g.fillStyle = '#808080';
+  g.fillRect(0, 0, 4, 4);
+}
+
+$('run').addEventListener('click', () => {
+  $('run').disabled = true;
+  const iv = [];
+  let last = 0, n = 0;
+  const t0 = performance.now();
+  function frame(now) {
+    if (last) iv.push(now - last);
+    last = now;
+    n++;
+    layers[1].style.visibility = n & 1 ? 'visible' : 'hidden';
+    $('state').textContent = `${((now - t0) / 1000).toFixed(1)} s`;
+    if (now - t0 < 10000) requestAnimationFrame(frame);
+    else done(iv);
+  }
+  requestAnimationFrame(frame);
+});
+
+function done(iv) {
+  $('run').disabled = false;
+  $('state').textContent = '';
+  const s = iv.slice().sort((a, b) => a - b);
+  const med = s[s.length >> 1];
+  const p99 = s[Math.floor(s.length * 0.99)];
+  const drops = iv.filter(d => d > med * 1.5).length;
+  const per200 = drops / iv.length * 200;
+  const hz = 1000 / med;
+  const half = Math.max(1, Math.round(hz / 30));
+  const good = per200 < 1;
+  $('out').innerHTML =
+    `<table class="mind-table">
+       <tr><td>Refresh</td><td>${hz.toFixed(1)} Hz (median frame ${med.toFixed(2)} ms)</td></tr>
+       <tr><td>Flicker rate the demo would use</td><td>${(hz / (2 * half)).toFixed(1)} Hz (${half} frame${half > 1 ? 's' : ''} per colour)</td></tr>
+       <tr><td>99th percentile frame</td><td>${p99.toFixed(2)} ms</td></tr>
+       <tr><td>Longest frame</td><td>${s[s.length - 1].toFixed(2)} ms</td></tr>
+       <tr><td>Dropped frames (&gt; 1.5 × median)</td><td>${drops} of ${iv.length}: ${per200.toFixed(2)} per 200</td></tr>
+       <tr><td>Verdict</td><td class="${good ? 'ok' : 'bad'}">${good ? 'steady enough' : 'too many drops: expect visible flashes'}</td></tr>
+     </table>`;
+  drawHist(iv, med);
+}
+
+function drawHist(iv, med) {
+  const c = $('hist');
+  const r = c.getBoundingClientRect(), dpr = devicePixelRatio || 1;
+  c.width = Math.round(r.width * dpr); c.height = Math.round(r.height * dpr);
+  const g = c.getContext('2d');
+  g.scale(dpr, dpr);
+  const w = r.width, h = r.height, max = med * 3, bins = 90;
+  const counts = new Array(bins).fill(0);
+  for (const d of iv) counts[Math.min(bins - 1, Math.floor(d / max * bins))]++;
+  const top = Math.max(...counts);
+  g.fillStyle = '#18181b'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < bins; i++) {
+    const bh = counts[i] ? Math.max(1, Math.log1p(counts[i]) / Math.log1p(top) * (h - 20)) : 0;
+    g.fillStyle = (i + 0.5) / bins * max > med * 1.5 ? '#e88a87' : '#e0a458';
+    g.fillRect(i * w / bins + 1, h - 14 - bh, w / bins - 2, bh);
+  }
+  g.fillStyle = '#9b9890'; g.font = '11px system-ui, sans-serif';
+  g.fillText('0 ms', 2, h - 2);
+  g.fillText(`${max.toFixed(0)} ms (log counts; red = dropped)`, w - 210, h - 2);
+}
+</script>
+</body>
+</html>
