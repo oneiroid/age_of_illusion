@@ -25,6 +25,7 @@ Demos of cognition rather than vision. The outcome and explanation stay hidden u
 | 12 | Девяносто процентов (Ninety percent) | Alpert & Raiffa 1969/1982; Fischhoff & Beyth 1975; Hell et al. 1988 | 5 questions: best guess + 90% range, predicted hits, then recall of each guess with the answer shown. Pool of 36 questions; unseen ones first |
 | 13 | Кто начал? (Who started it?) | new design; noise in the iterated prisoner's dilemma: Molander 1985, Wu & Axelrod 1995; Pronin, Lin & Ross 2002 | 30 rounds against tit-for-tat over a channel that turns two cooperations into defections (bot → player early, player → bot later); blame ratings from inside, then three records rated from outside, one of them the player's own |
 | 14 | Твой принцип (Your principle) | new design on cases by Foot, Thomson, Kamm; Cushman, Young & Hauser 2006; Hauser et al. 2007; Greene et al. 2009 | pick a principle, judge 10 trolley cases built as one-feature pairs; answers checked against 8 principles; a revised principle is tested on a reserve case it is predicted to get wrong (up to 3 times) |
+| 15 | Подпись (Signature) | new design on choice blindness: Johansson & Hall 2005; Hall, Johansson & Strandberg 2012; Strandberg et al. 2018 | rate 8 value statements (4 two-sided pairs) on 1–7; a model picks 2 answers to reverse in the "profile" and hashes (SHA-256) its bet on which ones go unnoticed before the profile is shown; reasons in the player's words, recall of the originals, then the sealed record. Round 2 (4 statements) seals 0–1 swaps to catch disowned genuine answers. Length is set in `SIG` (`js/mind/signature-model.js`) |
 
 See also [`twophase/`](twophase/): a simulation of the DeF Two-Phase Law, and [`lab/flicker-probe.html`](lab/flicker-probe.html): frame-timing check of a screen for For Your Eyes Only.
 
@@ -45,7 +46,7 @@ Keys: `←` `→` or `1`–`9` switch, `F` fullscreen. The URL hash (`#lilac-cha
   (optional `section`, `lang`, `gated`; see the comment in `core.js`)
 - `js/mind/*.js` — models behind the Mind demos; `js/eye/yours-model.js` — colours, calibration, cells and simulated observers for For Your Eyes Only
 - `test/` — `ninety.test.js` (Девяносто процентов: parsing, scoring), `who.test.js` (Кто начал?: glitches, blame tracing, records),
-  `principle.test.js` (Твой принцип: case pairs, rule fitting, challenges), `yours.test.js` (For Your Eyes Only: gamut and mean colour at every setting, cell statistics, simulated observers). Oracle checks: `oracle.test.js` (assertions), `oracle-bench.js` (simulated players),
+  `principle.test.js` (Твой принцип: case pairs, rule fitting, challenges), `signature.test.js` (Подпись: SHA-256 against Node, pairs, swap choice, seal), `yours.test.js` (For Your Eyes Only: gamut and mean colour at every setting, cell statistics, simulated observers). Oracle checks: `oracle.test.js` (assertions), `oracle-bench.js` (simulated players),
   `oracle-real.js` (real people; needs the converted data of Guseva et al. 2023, [osf.io/z8rjx](https://osf.io/z8rjx/), CC BY 4.0).
   The model's population prior was fitted on even-numbered participants; `oracle-real.js` scores odd ones.
 - `js/app.js` — navigation and panel
