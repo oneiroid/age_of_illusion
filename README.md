@@ -13,7 +13,7 @@ Eight classic illusions plus two new designs, rendered live on `<canvas>`. Vanil
 | 7 | Rotating Snakes | Kitaoka 2003; Fraser & Wilcox 1979 | static image; interactive: colour, grey steps |
 | 8 | Motion Silencing | Suchow & Alvarez, 2011 | animated (3 s still / 3 s turning); interactive: rotation speed, colour change rate |
 | 9 | Checker Shadow | Adelson, 1995 | static; interactive: connecting bar, hide scene |
-| 10 | For Your Eyes Only | new design on flicker photometry (Ives 1912) and individual cone ratios (Hofer et al. 2005) | gated; calibrate the red–green balance at which 15 Hz flicker vanishes for you, then a word in every frame that you don't see, and a word only you can read. Full-range red–green flicker (no photosensitivity limits), Space pauses; interactive: contrast, frames per colour; the setting is saved per screen |
+| 10 | For Your Eyes Only | new design on flicker photometry (Ives 1912) and individual cone ratios (Hofer et al. 2005) | gated; calibrate the red–green balance at which 30 Hz flicker vanishes for you, then a word in every frame that you don't see, and a word only you can read. Full-range red–green flicker (no photosensitivity limits), Space pauses; interactive: contrast, frames per colour; the setting is saved per screen |
 
 ### Разум (Mind, in Russian)
 

@@ -66,7 +66,7 @@ function done(iv) {
   const drops = iv.filter(d => d > med * 1.5).length;
   const per200 = drops / iv.length * 200;
   const hz = 1000 / med;
-  const half = Math.max(1, Math.round(hz / 30));
+  const half = Math.max(1, Math.round(hz / 60));
   const good = per200 < 1;
   $('out').innerHTML =
     `<table class="mind-table">

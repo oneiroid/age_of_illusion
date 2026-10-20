@@ -5,10 +5,10 @@ ILLUSIONS.push({
   gated: true,
   title: 'For Your Eyes Only',
   credit: 'New design for this app, 2026 · flicker photometry (Ives, 1912); individual cone ratios (Hofer et al., 2005)',
-  howto: 'Red and green flicker at about 15 Hz; Space or a tap pauses it. First you find the setting at which the flicker disappears for your eyes, which takes about two minutes. The setting belongs to your eyes and this screen: redo it on another monitor, or after changing the colour profile or turning Night Shift, True Tone or night light on or off. Sit at your usual distance. It is better with a second person nearby.',
+  howto: 'Red and green flicker at about 30 Hz; Space or a tap pauses it. If the flicker never disappears anywhere on the slider, change Frames per colour or lower Contrast. First you find the setting at which the flicker disappears for your eyes, which takes about two minutes. The setting belongs to your eyes and this screen: redo it on another monitor, or after changing the colour profile or turning Night Shift, True Tone or night light on or off. Sit at your usual distance. It is better with a second person nearby.',
   expect: 'At your own setting the word disappeared into an even colour, though it is in every frame: the frozen frame, a screenshot or a camera shows it plainly. Someone whose eyes weigh red and green differently sees the letters shimmer. In the second mode it is the other way round: for your eyes the letters are the only still cells; for anyone else they are lost among cells that happen to be still for them.',
   why: [
-    'Two frames alternate about 15 times a second. Inside the letters one frame is reddish and the other greenish. The background is a fine checkerboard of the same two colours swapping places, so every pixel goes through the same changes and the time average is the same everywhere. Colour vision cannot follow red–green alternation this fast and fuses it into the average; brightness vision can, up to about 50–60 Hz. So if the reddish and the greenish frame are equally bright for you, nothing is left to see.',
+    'Two frames alternate about 30 times a second: one screen refresh each on a 60 Hz screen. Inside the letters one frame is reddish and the other greenish. The background is a fine checkerboard of the same two colours swapping places, so every pixel goes through the same changes and the time average is the same everywhere. Colour vision cannot follow red–green alternation this fast and fuses it into the average; brightness vision can, up to about 50–60 Hz. So if the reddish and the greenish frame are equally bright for you, nothing is left to see. At 15 Hz saturated red and green still flicker visibly as colour, so no balance stills them; classic flicker photometry uses paler lights.',
     'The calibration found that balance. It is heterochromatic flicker photometry, the method behind the luminance curve V(λ) of 1924, and so behind the weights your screen uses for brightness, Y = 0.2126 R + 0.7152 G + 0.0722 B. The balance is personal: people with normal colour vision differ several-fold in the ratio of L to M cones (Hofer et al., 2005), and the setting where flicker disappears varies between people about five times more than between repeated settings by one person (He et al., 2021). For someone 10% away from you the letters flicker at about 5% contrast. Red swings over the whole range of the screen and there is no blue, which makes that flicker as large as the screen allows; Contrast in the controls turns it down.',
     'Each frame on its own contains the word in plain colour, which is why a screenshot or a camera with a short exposure shows it. It is the inverse of Ghost Word, where the word is in no frame and exists only in motion.',
     'In the second mode every cell alternates between two colours. In the background the red and green amplitudes of a cell differ by 8 or 16%; in the letters they are equal. For your eyes the letters are the only still cells. For someone else other, scattered cells are still, and the letters flicker about as much as the background. In a model observer the letters stop standing out once two people differ by about 10%, while someone within 2% of you sees them as well as you do. Red and green levels are distributed alike inside and outside the letters, but the cipher only resists eyes: a computer comparing two consecutive frames reads it at once.',
@@ -165,7 +165,7 @@ ILLUSIONS.push({
           const s = intervals.slice(30).sort((x, y) => x - y);
           period = s[s.length >> 1];
           if (!userHalf) {
-            half = Math.max(1, Math.round(1000 / period / 30));
+            half = Math.max(1, Math.round(1000 / period / 60));
             halfInput.value = half;
             halfInput.dispatchEvent(new Event('input'));
           }
@@ -335,7 +335,7 @@ ILLUSIONS.push({
       const v = toSlider(cal.logk);
       setBar(
         `<p class="mind-step">Calibration${cal.who === 'friend' ? ' for your friend' : ''} · setting ${t + 1} of ${cal.n}</p>
-         <p class="mind-sub">Look at the middle of the disc and move the slider (or <kbd>←</kbd> <kbd>→</kbd>, with Shift for big steps) until the flicker is weakest. The colour doesn’t matter, only the shimmer. At the right point the disc may vanish altogether.</p>
+         <p class="mind-sub">Look at the middle of the disc and move the slider (or <kbd>←</kbd> <kbd>→</kbd>, with Shift for big steps) until the flicker is weakest. The colour doesn’t matter, only the shimmer. At the right point the disc may vanish altogether. If no point stops the flicker, try another Frames per colour or a lower Contrast in the controls.</p>
          <div class="fy-row">
            ${playBtn}
            <input class="fy-slider" type="range" min="0" max="1000" step="1" value="${cal.flip ? 1000 - v : v}" aria-label="Red–green balance">
