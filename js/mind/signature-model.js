@@ -90,13 +90,22 @@ function sigPick(counts, seen = [], rand = Math.random) {
   return counts.map(n => {
     const pairs = pool.slice(at, at += n);
     const items = pairs.flatMap(p => p.s.map((text, k) => ({ id: p.id + k, pair: p.id, theme: p.theme, text })));
-    let best = items;
-    for (let t = 0; t < 60; t++) {
-      const o = sigShuffle(items.slice(), rand);
-      if (o.every((it, i) => i === 0 || o[i - 1].pair !== it.pair)) { best = o; break; }
-    }
-    return best;
+    return sigOrder(items, rand).map(i => items[i]);
   });
+}
+
+/* A random order of item indices in which the two halves of a pair are never side
+   by side and, when possible, not the order the items came in. */
+function sigOrder(items, rand = Math.random) {
+  const idx = items.map((_, i) => i);
+  let fallback = null;
+  for (let t = 0; t < 200; t++) {
+    const o = sigShuffle(idx.slice(), rand);
+    if (!o.every((x, k) => k === 0 || items[o[k - 1]].pair !== items[x].pair)) continue;
+    if (o.some((x, k) => x !== k)) return o;
+    fallback = o;
+  }
+  return fallback || idx;
 }
 
 /* Mirror around the midpoint; only 2, 3, 5, 6 are swapped (extremes are noticed,
@@ -159,6 +168,10 @@ function sigControls(items, swaps, n, rand = Math.random) {
   const taken = new Set(swaps.map(s => s.i));
   return sigShuffle(items.map((_, i) => i).filter(i => !taken.has(i)), rand).slice(0, n);
 }
+
+/* A swapped answer counts as caught when the respondent moves it back to their own side
+   of the scale while reviewing the profile. */
+const sigCaught = (from, final) => (final - 4) * (from - 4) > 0;
 
 const sigK = (maxK, rand = Math.random) => Math.floor(rand() * (maxK + 1));
 
@@ -229,6 +242,6 @@ const sha256 = (function () {
 })();
 
 if (typeof module !== 'undefined') {
-  module.exports = { SIG, SIG_SCALE, SIG_PAIRS, SIG_W, sigPick, sigMirror, sigSwappable, sigScore, sigChooseSwaps,
+  module.exports = { SIG, SIG_SCALE, SIG_PAIRS, SIG_W, sigPick, sigOrder, sigCaught, sigMirror, sigSwappable, sigScore, sigChooseSwaps,
     sigControls, sigK, sigRecall, sigSealText, sigSalt, sha256 };
 }

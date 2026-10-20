@@ -384,9 +384,8 @@ kbd {
 .sig-scale { display: flex; justify-content: center; gap: 6px; }
 .sig-scale .btn { width: 46px; padding: 11px 0; font-size: 15px; font-variant-numeric: tabular-nums; }
 .sig-scale .btn.on { background: var(--accent); border-color: var(--accent); color: #111; }
-.sig-scale.still { gap: 3px; justify-content: flex-start; }
-.sig-scale.still .btn { width: 28px; padding: 5px 0; font-size: 12px; cursor: default; }
-.sig-scale.still .btn:disabled { opacity: 1; }
+.sig-scale.small { gap: 4px; justify-content: flex-start; }
+.sig-scale.small .btn { width: 34px; padding: 7px 0; font-size: 13px; }
 .sig-ends { display: flex; justify-content: space-between; max-width: 364px; margin: 6px auto 0; color: var(--muted); font-size: 12px; }
 .sig-label { min-height: 1.55em; }
 
@@ -395,7 +394,6 @@ kbd {
 
 .sig-cards { display: grid; gap: 10px; text-align: left; }
 .sig-card { padding: 14px 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg-2); }
-.sig-card.flagged { border-color: #d0605e; }
 .sig-card.swap { border-color: var(--accent); }
 .sig-theme { margin: 0 0 4px; color: var(--accent); font: 600 11px/1.3 var(--sans); letter-spacing: 0.1em; text-transform: uppercase; }
 .sig-card-text { margin: 0 0 10px; font: 17px/1.45 var(--serif); }
@@ -413,8 +411,6 @@ kbd {
 }
 .sig-reason input:focus { outline: none; border-color: var(--accent); }
 .sig-reason input:disabled { opacity: 0.4; }
-.sig-flag { margin-top: 12px; font-size: 12px; }
-.sig-flag.on { background: #d0605e; border-color: #d0605e; color: #111; }
 
 .sig-quote { margin: 4px 0 10px; padding-left: 14px; border-left: 3px solid var(--accent); font: italic 21px/1.4 var(--serif); }
 .sig-quote.caught { border-left-color: var(--line); font: 15px/1.5 var(--sans); }

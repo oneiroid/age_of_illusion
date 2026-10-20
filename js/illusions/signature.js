@@ -15,8 +15,8 @@
     gated: true,
     title: 'Подпись',
     credit: 'Новая демонстрация. Слепота к выбору: Johansson & Hall, 2005; Hall, Johansson & Strandberg, 2012; Strandberg и др., 2018',
-    howto: `${STATEMENTS(N1)} о ценностях: отметьте, насколько вы согласны с каждым, от 1 до 7. Затем программа покажет ваш профиль убеждений. Проверьте, что ответы записаны верно, к некоторым напишите одной фразой, почему вы так считаете, и подпишите профиль. Клавиши 1–7 и Enter.`,
-    expect: `В профиле ${SIG.swaps1} из ${N1} ответов были заменены на противоположные: «скорее нет» на «скорее да» и наоборот. Программа выбрала их по тому, как вы отвечали, и до показа профиля записала, какие ответы подменит и какие из подмен вы примете как свои. Код сессии был хешем SHA-256 этой записи: её нельзя было изменить задним числом. Люди обычно пропускают большую часть таких подмен и объясняют ответы, которых не давали. Во втором раунде число подмен тоже было запечатано, и оно могло быть нулём: насторожённые люди начинают отрекаться от собственных ответов.`,
+    howto: `${STATEMENTS(N1)} о ценностях: отметьте, насколько вы согласны с каждым, от 1 до 7. Затем программа покажет ваш профиль убеждений: к некоторым ответам напишите одной фразой, почему вы так считаете, и подпишите профиль. Клавиши 1–7 и Enter.`,
+    expect: `В профиле ${SIG.swaps1} из ${N1} ответов были заменены на противоположные: «скорее нет» на «скорее да» и наоборот. Программа выбрала их по тому, как вы отвечали, и до показа профиля записала, какие ответы подменит и какие из подмен вы примете как свои. Код сессии был хешем SHA-256 этой записи: её нельзя было изменить задним числом. Люди обычно пропускают большую часть таких подмен и объясняют ответы, которых не давали. Во втором раунде число подмен тоже было запечатано, и оно могло быть нулём: насторожённые люди начинают «исправлять» собственные ответы.`,
     why: [
       'Слепота к выбору (choice blindness). Участники выбирали из двух фотографий более привлекательное лицо, а экспериментатор незаметно подавал им другое. Большинство подмен не замечали и объясняли выбор, которого не делали, — ссылаясь на серьги, которых не было на выбранном фото (Johansson, Hall и др., 2005). То же происходит с моральными убеждениями. В анкете, которая незаметно переворачивала ответы, 69% участников пропустили хотя бы одну из двух подмен, и многие уверенно защищали позицию, противоположную своей (Hall, Johansson & Strandberg, 2012).',
       'Убеждение не лежит в памяти готовой записью, которую можно прочитать. Его восстанавливают по тому, что видно сейчас, в том числе по собственным поступкам (теория самовосприятия: Bem, 1972; Nisbett & Wilson, 1977). Если в профиле написано «согласен», причины согласиться находятся. Восстановление идёт и в памяти: принятая подмена тянет к себе воспоминание о собственном ответе и может сдвинуть мнение на неделю и дольше (Strandberg и др., 2018).',
@@ -38,7 +38,8 @@
       const say = r => `${r} — ${SIG_SCALE[r]}`;
       const group = hash => hash.match(/.{4}/g).join(' ');
 
-      // R[1], R[2]: { items, ans, swaps, seal, flags, reasons }; round 1 also has controls, recall.
+      // R[1], R[2]: { items, ans, swaps, seal, final, reasons }; round 1 also has controls, recall.
+      // final[i]: the answer as left in the profile, where any answer can be changed.
       let phase, round, R, k, pick, recallOrder;
 
       function readSeen() {
@@ -64,13 +65,13 @@
 
       const swapAt = (r, i) => R[r].swaps.find(s => s.i === i);
       const shown = (r, i) => (swapAt(r, i) ? swapAt(r, i).to : R[r].ans[i].r);
+      const caught = (r, s) => sigCaught(s.from, R[r].final[s.i]);
+      const changed = (r, i) => !swapAt(r, i) && R[r].final[i] !== R[r].ans[i].r;
 
-      function scale(value, live) {
+      function scale(value, small) {
         let b = '';
-        for (let v = 1; v <= 7; v++) {
-          b += `<button type="button" class="btn${v === value ? ' on' : ''}" data-v="${v}"${live ? '' : ' disabled tabindex="-1"'}>${v}</button>`;
-        }
-        return `<div class="sig-scale${live ? '' : ' still'}">${b}</div>`;
+        for (let v = 1; v <= 7; v++) b += `<button type="button" class="btn${v === value ? ' on' : ''}" data-v="${v}">${v}</button>`;
+        return `<div class="sig-scale${small ? ' small' : ''}">${b}</div>`;
       }
       const ends = '<div class="sig-ends"><span>совсем не согласен</span><span>полностью согласен</span></div>';
 
@@ -92,7 +93,7 @@
              <p class="mind-step">${step}</p>
              <p class="sig-text">${esc(text)}</p>
              ${sub ? `<p class="mind-sub">${sub}</p>` : ''}
-             ${scale(null, true)}${ends}
+             ${scale(null)}${ends}
              <p class="mind-note sig-label">&nbsp;</p>
              <button type="button" class="btn btn-primary mind-go" disabled>Дальше</button>
            </div>`;
@@ -131,7 +132,7 @@
         }
         const text = sigSealText(round, S.items, S.swaps, sigSalt());
         S.seal = { text, hash: sha256(text) };
-        S.flags = new Set();
+        S.final = S.items.map((_, i) => shown(round, i));
         S.reasons = {};
         markSeen(S.items);
         phase = 'profile';
@@ -140,50 +141,40 @@
       function renderProfile() {
         const S = R[round];
         const ask = new Set(round === 1 ? [...S.swaps.map(s => s.i), ...S.controls] : []);
-        // Grouped by theme: the two statements of a pair side by side, pairs in random order.
-        const pairs = sigShuffle([...new Set(S.items.map(it => it.pair))]);
-        const order = pairs.flatMap(p => S.items.map((it, i) => i).filter(i => S.items[i].pair === p));
-        const card = i => {
-          const it = S.items[i], v = shown(round, i);
-          return `<div class="sig-card" data-i="${i}">
-              <p class="sig-theme">${it.theme}</p>
-              <p class="sig-card-text">${esc(it.text)}</p>
-              ${scale(v, false)}
-              <p class="sig-shown">${say(v)}</p>
+        // A fresh order with no pair side by side and no theme labels, so pairs are not compared.
+        const card = i => `<div class="sig-card" data-i="${i}">
+              <p class="sig-card-text">${esc(S.items[i].text)}</p>
+              ${scale(S.final[i], true)}
+              <p class="sig-shown">${say(S.final[i])}</p>
               ${ask.has(i) ? `<label class="sig-reason"><span>Почему вы так считаете? Одной фразой.</span>
-                 <input type="text" maxlength="240" autocomplete="off" data-i="${i}"></label>` : ''}
-              <button type="button" class="btn sig-flag" data-i="${i}">Это не мой ответ</button>
+                 <input type="text" maxlength="240" autocomplete="off"></label>` : ''}
             </div>`;
-        };
         root.innerHTML =
           `<div class="mind-col wide">
              <p class="mind-step">${round === 2 ? 'Раунд 2 · ' : ''}Профиль</p>
              <p class="mind-big">Ваш профиль убеждений</p>
              <p class="mind-sub">${round === 1
-               ? 'Проверьте, что ответы записаны верно. Если какой-то ответ не ваш, отметьте его. Где есть поле, напишите одной фразой, почему вы так считаете.'
-               : 'Найдите подмены и отметьте их. Подмен сколько-то — возможно, ни одной.'}</p>
+               ? 'Там, где есть поле, напишите одной фразой, почему вы так считаете. Перед подписью любой ответ можно изменить.'
+               : 'Найдите подмены и верните свои ответы. Подмен сколько-то — возможно, ни одной.'}</p>
              <p class="sig-code">Код сессии <code>${group(S.seal.hash)}</code></p>
-             <div class="sig-cards">${order.map(card).join('')}</div>
+             <div class="sig-cards">${sigOrder(S.items).map(card).join('')}</div>
              <button type="button" class="btn btn-primary mind-go">Подписать</button>
            </div>`;
         const go = root.querySelector('.mind-go');
         const inputs = [...root.querySelectorAll('.sig-reason input')];
-        const update = () => {
-          go.disabled = inputs.some(f => !S.flags.has(Number(f.dataset.i)) && f.value.trim().length < 5);
-        };
+        const update = () => { go.disabled = inputs.some(f => f.value.trim().length < 5); };
         inputs.forEach(f => f.addEventListener('input', update));
-        root.querySelectorAll('.sig-flag').forEach(b => b.addEventListener('click', () => {
-          const i = Number(b.dataset.i);
-          if (S.flags.has(i)) S.flags.delete(i); else S.flags.add(i);
-          const on = S.flags.has(i);
-          b.classList.toggle('on', on);
-          b.closest('.sig-card').classList.toggle('flagged', on);
-          const f = inputs.find(x => Number(x.dataset.i) === i);
-          if (f) f.disabled = on;
-          update();
-        }));
+        root.querySelectorAll('.sig-card').forEach(c => {
+          const i = Number(c.dataset.i);
+          const btns = [...c.querySelectorAll('.sig-scale button')];
+          btns.forEach(b => b.addEventListener('click', () => {
+            S.final[i] = Number(b.dataset.v);
+            btns.forEach(x => x.classList.toggle('on', x === b));
+            c.querySelector('.sig-shown').textContent = say(S.final[i]);
+          }));
+        });
         go.addEventListener('click', () => {
-          inputs.forEach(f => { S.reasons[f.dataset.i] = f.value.trim(); });
+          inputs.forEach(f => { S.reasons[f.closest('.sig-card').dataset.i] = f.value.trim(); });
           if (round === 1) {
             recallOrder = sigShuffle([...S.swaps.map(s => s.i), ...S.controls]);
             S.recall = {};
@@ -243,21 +234,22 @@
 
       function renderReveal() {
         const S = R[1];
-        const flagged = i => S.flags.has(i);
         const n = S.swaps.length;
-        const caught = S.swaps.filter(s => flagged(s.i)).length;
-        const right = S.swaps.filter(s => (s.bet === 'detect') === flagged(s.i)).length;
-        const extra = S.items.filter((_, i) => flagged(i) && !swapAt(1, i)).length;
+        const nCaught = S.swaps.filter(s => caught(1, s)).length;
+        const right = S.swaps.filter(s => (s.bet === 'detect') === caught(1, s)).length;
+        const extra = S.items.filter((_, i) => changed(1, i)).length;
 
         const swapCard = s => {
           const it = S.items[s.i], said = S.reasons[s.i];
-          const rec = S.recall[s.i];
-          const body = flagged(s.i)
-            ? `<p class="sig-quote caught">Вы отметили: «Это не мой ответ».</p>
-               <p class="sig-facts">В профиле стояло <b>${say(s.to)}</b>. Вы ответили <b>${say(s.from)}</b>.</p>`
+          const rec = S.recall[s.i], fin = S.final[s.i];
+          const body = caught(1, s)
+            ? `<p class="sig-quote caught">Вы заметили: в профиле стояло <b>${say(s.to)}</b>, и вы исправили на <b>${say(fin)}</b>.
+                 Вы ответили <b>${say(s.from)}</b>.</p>
+               <blockquote class="sig-quote">«${esc(said)}»</blockquote>`
             : `<blockquote class="sig-quote">«${esc(said)}»</blockquote>
-               <p class="sig-facts">Так вы объяснили ответ <b>${say(s.to)}</b>. Вы его не давали: вы ответили <b>${say(s.from)}</b>.</p>`;
-          const ok = (s.bet === 'detect') === flagged(s.i);
+               <p class="sig-facts">Так вы объяснили ответ <b>${say(fin)}</b>.
+                 ${fin === s.to ? 'Вы его не давали' : `В профиле стояло ${s.to}, его вы не давали`}: вы ответили <b>${say(s.from)}</b>.</p>`;
+          const ok = (s.bet === 'detect') === caught(1, s);
           return `<div class="sig-card swap">
               <p class="sig-theme">${it.theme}</p>
               <p class="sig-card-text">${esc(it.text)}</p>
@@ -272,17 +264,17 @@
           return `<div class="sig-card">
               <p class="sig-theme">${it.theme} · ответ не меняли</p>
               <p class="sig-card-text">${esc(it.text)}</p>
-              ${flagged(i)
-                ? `<p class="sig-quote caught">Вы отметили его как не свой. Это ваш ответ: <b>${say(r)}</b>.</p>`
-                : `<blockquote class="sig-quote">«${esc(S.reasons[i])}»</blockquote>
-                   <p class="sig-facts">Ваш настоящий ответ: <b>${say(r)}</b>.</p>`}
+              <blockquote class="sig-quote">«${esc(S.reasons[i])}»</blockquote>
+              <p class="sig-facts">${changed(1, i)
+                ? `Это ваш настоящий ответ, <b>${say(r)}</b>, но в профиле вы изменили его на <b>${say(S.final[i])}</b>.`
+                : `Ваш настоящий ответ: <b>${say(r)}</b>.`}</p>
               <p class="sig-facts">${rec === r ? `Вспомнили верно: ${rec}.` : `Вспомнили ${rec}, а ответили ${r}.`}</p>
             </div>`;
         };
 
         const head = n
           ? `<p class="mind-big">Подменено <b>${n}</b> из ${S.items.length} ответов</p>
-             <p class="mind-sub">Вы заметили ${caught} из ${n}. Программа выбрала эти ответы по тому, как вы отвечали,
+             <p class="mind-sub">Вы заметили и исправили ${nCaught} из ${n}. Программа выбрала эти ответы по тому, как вы отвечали,
                и записала ставку до того, как показала профиль. Код сессии был хешем этой записи.</p>`
           : `<p class="mind-big">Подменять было нечего</p>
              <p class="mind-sub">Все ваши ответы были крайними или посередине шкалы: такие подмены программа не делает,
@@ -294,7 +286,7 @@
              ${head}
              <div class="sig-cards">${S.swaps.map(swapCard).join('')}${S.controls.map(controlCard).join('')}</div>
              ${n ? `<p class="sig-line">Ставки программы: верно ${right} из ${n}.</p>` : ''}
-             ${extra ? `<p class="sig-line">Ещё вы отметили как не свои ${extra} ${plural(extra, ['настоящий ответ', 'настоящих ответа', 'настоящих ответов'])}.</p>` : ''}
+             ${extra ? `<p class="sig-line">Ещё в профиле вы изменили ${extra} ${plural(extra, ['настоящий ответ', 'настоящих ответа', 'настоящих ответов'])}, которые никто не трогал.</p>` : ''}
              <h4>Печать</h4>
              <div class="sig-seal-wrap">${sealBlock(S)}</div>
              <h4>Второй раунд</h4>
@@ -316,18 +308,18 @@
         let r2 = '';
         if (played2) {
           const kk = B.swaps.length;
-          const found = B.swaps.filter(s => B.flags.has(s.i)).length;
-          const disowned = B.items.filter((_, i) => B.flags.has(i) && !swapAt(2, i)).length;
+          const found = B.swaps.filter(s => caught(2, s)).length;
+          const disowned = B.items.filter((_, i) => changed(2, i)).length;
           const verdict = i => {
-            const sw = swapAt(2, i), f = B.flags.has(i);
-            if (sw) return f ? ['ok', 'подмена — найдена'] : ['miss', 'подмена — пропущена'];
-            return f ? ['miss', 'ваш ответ — отмечен как чужой'] : ['ok', 'ваш ответ — оставлен'];
+            const sw = swapAt(2, i);
+            if (sw) return caught(2, sw) ? ['ok', 'подмена — исправлена'] : ['miss', 'подмена — пропущена'];
+            return changed(2, i) ? ['miss', 'ваш ответ — «исправлен», хотя его не трогали'] : ['ok', 'ваш ответ — оставлен'];
           };
           const lead = disowned && !kk
             ? 'Подмен не было. Вы отреклись от собственного ответа.'
             : disowned
               ? `Вы отреклись от ${disowned} ${plural(disowned, ['собственного ответа', 'собственных ответов', 'собственных ответов'])}.`
-              : found === kk ? (kk ? 'Вы нашли все подмены и не тронули своих ответов.' : 'Подмен не было, и вы ничего не отметили.')
+              : found === kk ? (kk ? 'Вы нашли все подмены и не тронули своих ответов.' : 'Подмен не было, и вы ничего не изменили.')
                 : 'Часть подмен прошла незамеченной, хотя вы о них знали.';
           r2 = `<p class="mind-step">Раунд 2</p>
             <p class="mind-big">Подмен было: <b>${kk}</b></p>
@@ -335,7 +327,8 @@
             <table class="mind-table sig-table"><tbody>
               ${B.items.map((it, i) => {
                 const [cls, t] = verdict(i);
-                return `<tr class="${cls}"><td>${esc(it.text)}</td><td>${B.ans[i].r}${swapAt(2, i) ? ` → ${swapAt(2, i).to}` : ''}</td><td>${t}</td></tr>`;
+                const steps = swapAt(2, i) ? `${B.ans[i].r} → ${swapAt(2, i).to} → ${B.final[i]}` : B.final[i] === B.ans[i].r ? `${B.ans[i].r}` : `${B.ans[i].r} → ${B.final[i]}`;
+                return `<tr class="${cls}"><td>${esc(it.text)}</td><td>${steps}</td><td>${t}</td></tr>`;
               }).join('')}
             </tbody></table>
             <h4>Печать второго раунда</h4>
@@ -343,8 +336,8 @@
         }
 
         const n = A.swaps.length;
-        const accepted = A.swaps.filter(s => !A.flags.has(s.i)).length;
-        const right = A.swaps.filter(s => (s.bet === 'detect') === A.flags.has(s.i)).length;
+        const accepted = A.swaps.filter(s => !caught(1, s)).length;
+        const right = A.swaps.filter(s => (s.bet === 'detect') === caught(1, s)).length;
         const mem = A.swaps.filter(s => A.recall[s.i] !== s.from).length;
         const all = [1, 2].flatMap(r => (R[r].seal ? R[r].items.map((it, i) => [it, R[r].ans[i].r]) : []));
 

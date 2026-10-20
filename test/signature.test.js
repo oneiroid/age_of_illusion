@@ -2,7 +2,7 @@
 /* «Подпись» checks. Run: node test/signature.test.js */
 const assert = require('node:assert');
 const nodeCrypto = require('node:crypto');
-const { SIG, SIG_SCALE, SIG_PAIRS, sigPick, sigMirror, sigSwappable, sigScore, sigChooseSwaps,
+const { SIG, SIG_SCALE, SIG_PAIRS, sigPick, sigOrder, sigCaught, sigMirror, sigSwappable, sigScore, sigChooseSwaps,
   sigControls, sigK, sigRecall, sigSealText, sigSalt, sha256 } = require('../js/mind/signature-model.js');
 // Seeded PRNG (mulberry32, as in core.js).
 const rngOf = seed => () => {
@@ -47,6 +47,19 @@ for (let t = 0; t < 50; t++) {
   }
   assert.strictEqual([...p1].filter(p => !seen.includes(p)).length, 3);
 }
+
+// Profile order: a permutation, no pair side by side, never the answering order.
+for (let t = 0; t < 200; t++) {
+  const its = sigPick([SIG.pairs1], [], rngOf(300 + t))[0];
+  const o = sigOrder(its, rngOf(t));
+  assert.deepStrictEqual(o.slice().sort((x, y) => x - y), its.map((_, i) => i));
+  assert.ok(o.every((x, k) => k === 0 || its[o[k - 1]].pair !== its[x].pair));
+  assert.ok(o.some((x, k) => x !== k));
+}
+
+// A swap is caught when the profile answer goes back to the original side of the midpoint.
+assert.ok(sigCaught(3, 3) && sigCaught(3, 1) && sigCaught(6, 5));
+assert.ok(!sigCaught(3, 5) && !sigCaught(3, 4) && !sigCaught(6, 2));
 
 // Mirror and candidates.
 assert.deepStrictEqual([1, 2, 3, 4, 5, 6, 7].filter(sigSwappable), [2, 3, 5, 6]);
