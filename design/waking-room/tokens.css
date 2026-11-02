@@ -1,0 +1,75 @@
+/* Waking Room — generated from tokens.json */
+@import url("https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Libre+Franklin:wght@400;600&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap");
+
+:root, [data-theme="lodge"] {
+  --background: #070505;
+  --surface: #130c0c;
+  --border: #2a1a1a;
+  --border-strong: #75605b;
+  --text: #e6ddcc;
+  --text-muted: #8f8377;
+  --curtain: #9e0b14;
+  --curtain-deep: #3d0306;
+  --curtain-text: #ff4f57;
+  --on-curtain: #f0e6d4;
+  --lamp: #d45aa6;
+  --lamp-soft: #22091a;
+  --hearth: #d9944a;
+  --floor-light: #c9a46a;
+  --floor-dark: #2a170d;
+  --marble: #ddd6c8;
+  --silver: #7e7a74;
+  --blade: #000000;
+  --focus: var(--lamp);
+  --lamp-glow: 0 0 40px rgba(212, 90, 166, 0.32);
+  --fold: inset 0 -20px 32px rgba(0, 0, 0, 0.5);
+}
+[data-theme="insomnia"] {
+  --background: #c9ccbd;
+  --surface: #d8dbcd;
+  --border: #a9ad9e;
+  --border-strong: #6a6e61;
+  --text: #0b0909;
+  --text-muted: #45483f;
+  --curtain: #8a0a12;
+  --curtain-deep: #3d0306;
+  --curtain-text: var(--curtain);
+  --lamp: #7e1a5a;
+  --lamp-soft: #e2cfd6;
+  --lamp-glow: 0 0 24px rgba(126, 26, 90, 0.22);
+  --focus: var(--lamp);
+}
+:root {
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-40: 40px;
+  --space-64: 64px;
+  --radius-0: 0;
+  --radius-2: 2px;
+  --radius-round: 9999px;
+  --ghost-red: 3px 0 0 rgba(158, 11, 20, 0.6);
+  --ghost-lamp: -2px 0 0 rgba(212, 90, 166, 0.35);
+  --grain-opacity: 0.16;
+  --flicker-duration: 9s;
+  --cozy-duration: 1800ms;
+  --cozy-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --cool-duration: 2000ms;
+  --dread-delay: 3800ms;
+  --font-display: "IM Fell English", "Iowan Old Style", Georgia, serif;
+  --font-text: "Libre Franklin", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Courier Prime", "Courier New", monospace;
+}
+.display-xl { font-family: var(--font-display); font-size: 104px; line-height: 0.92; font-weight: 400; }
+.display-l { font-family: var(--font-display); font-size: 64px; line-height: 1; font-weight: 400; }
+.heading { font-family: var(--font-display); font-size: 36px; line-height: 42px; font-weight: 400; }
+.quote { font-family: var(--font-display); font-size: 30px; line-height: 38px; font-weight: 400; font-style: italic; }
+.body-l { font-family: var(--font-text); font-size: 18px; line-height: 28px; font-weight: 400; }
+.body { font-family: var(--font-text); font-size: 16px; line-height: 24px; font-weight: 400; }
+.body-s { font-family: var(--font-text); font-size: 14px; line-height: 20px; font-weight: 400; }
+.label { font-family: var(--font-text); font-size: 14px; line-height: 20px; font-weight: 600; }
+.stamp { font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
+.caption { font-family: var(--font-mono); font-size: 13px; line-height: 20px; font-weight: 400; }
+.transcript { font-family: var(--font-mono); font-size: 15px; line-height: 24px; font-weight: 400; }

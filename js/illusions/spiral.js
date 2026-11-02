@@ -62,7 +62,7 @@ ILLUSIONS.push({
 
       // Progress arc around the pattern
       const frac = adapting ? tc / ADAPT : (tc - ADAPT) / TEST;
-      ctx.strokeStyle = adapting ? 'rgba(255,255,255,0.35)' : 'rgba(224,164,88,0.8)';
+      ctx.strokeStyle = adapting ? 'rgba(255,255,255,0.35)' : getComputedStyle(document.documentElement).getPropertyValue('--lamp');
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.arc(cx, cy, size / 2 + 8, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2);

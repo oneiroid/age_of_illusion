@@ -69,7 +69,7 @@ ILLUSIONS.push({
            <button type="button" class="pr-rule pr-none" data-id="">
              <b>Ни один не подходит</b><span>Программа проверит только, какой принцип описывает ваши ответы.</span>
            </button>
-           <button type="button" class="btn btn-primary mind-go">Дальше</button>
+           <button type="button" class="wr-btn wr-btn-curtain mind-go">Дальше</button>
          </div>`;
       wireRules(root.querySelector('.mind-go'), id => {
         chosen = id || null;
@@ -82,13 +82,13 @@ ILLUSIONS.push({
       current = c;
       root.innerHTML =
         `<div class="mind-col wide">
-           <p class="mind-step">${step}</p>
+           <p class="mind-step stamp">${step}</p>
            <p class="mind-big">${c.title}</p>
            <p class="pr-text">${c.text}</p>
            <p class="pr-q">${c.q}</p>
            <div class="pr-yn">
-             <button type="button" class="btn" data-v="1">Допустимо<kbd>1</kbd></button>
-             <button type="button" class="btn" data-v="0">Недопустимо<kbd>2</kbd></button>
+             <button type="button" class="wr-btn wr-btn-quiet" data-v="1">Допустимо<kbd>1</kbd></button>
+             <button type="button" class="wr-btn wr-btn-quiet" data-v="0">Недопустимо<kbd>2</kbd></button>
            </div>
          </div>`;
       root.querySelectorAll('.pr-yn button').forEach(b => b.addEventListener('click', () => answer(b.dataset.v === '1')));
@@ -151,8 +151,8 @@ ILLUSIONS.push({
            <h4>Пары случаев</h4>
            ${ps}
            <div class="pr-actions">
-             <button type="button" class="btn btn-primary mind-go">Уточнить принцип</button>
-             <button type="button" class="btn mind-go">Начать заново</button>
+             <button type="button" class="wr-btn wr-btn-curtain mind-go">Уточнить принцип</button>
+             <button type="button" class="wr-btn wr-btn-quiet mind-go">Начать заново</button>
            </div>
          </div>`;
       const [revise, again] = root.querySelectorAll('.pr-actions button');
@@ -167,7 +167,7 @@ ILLUSIONS.push({
            <p class="mind-big">Какой принцип ближе к вашему мнению теперь?</p>
            <p class="mind-sub">Он будет проверен на новом случае.</p>
            ${ruleList(P_RULES, counts)}
-           <button type="button" class="btn btn-primary mind-go">Проверить</button>
+           <button type="button" class="wr-btn wr-btn-curtain mind-go">Проверить</button>
          </div>`;
       wireRules(root.querySelector('.mind-go'), id => {
         const rule = ruleById(id);
@@ -186,13 +186,13 @@ ILLUSIONS.push({
       const more = tried.length < MAX_CHALLENGES && challenge(rule, answers);
       root.innerHTML =
         `<div class="mind-col">
-           <p class="mind-step">${c.title}</p>
+           <p class="mind-step stamp">${c.title}</p>
            <p class="mind-big">${held ? 'Принцип выдержал этот случай' : 'Принцип не выдержал'}</p>
            <p class="mind-sub">${q(rule.name)} говорит: ${OK[says].toLowerCase()}. Вы ответили: ${OK[ok].toLowerCase()}.</p>
            <p class="who-line">Теперь он описывает ${agree} из ${answers.length} ваших ответов.</p>
            <div class="pr-actions">
-             ${more ? '<button type="button" class="btn btn-primary mind-go" data-a="revise">Уточнить ещё раз</button>' : ''}
-             <button type="button" class="btn mind-go" data-a="final">Итог</button>
+             ${more ? '<button type="button" class="wr-btn wr-btn-curtain mind-go" data-a="revise">Уточнить ещё раз</button>' : ''}
+             <button type="button" class="wr-btn wr-btn-quiet mind-go" data-a="final">Итог</button>
            </div>
          </div>`;
       root.querySelectorAll('.pr-actions button').forEach(b =>
@@ -213,7 +213,7 @@ ILLUSIONS.push({
            </table>
            <h4>По всем ${answers.length} ответам</h4>
            ${fitTable(3)}
-           <button type="button" class="btn mind-go">Начать заново</button>
+           <button type="button" class="wr-btn wr-btn-quiet mind-go">Начать заново</button>
          </div>`;
       root.querySelector('.mind-go').addEventListener('click', start);
     }

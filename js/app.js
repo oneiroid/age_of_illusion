@@ -7,31 +7,35 @@
   const nav = $('nav');
   const list = window.ILLUSIONS;
 
-  // Nav dividers for sections after the default (visual) one.
-  const SECTIONS = { mind: 'Разум', ear: 'Слух' };
+  // Collapsible nav groups; the default section starts open.
+  const DEFAULT_SECTION = 'visual';
+  const SECTIONS = { visual: 'Visual', mind: 'Разум', ear: 'Слух' };
   const LABELS = {
     en: { howto: 'How to view', expect: 'What happens', controls: 'Controls', why: 'Why it happens' },
     ru: { howto: 'Задание', expect: 'Что произошло', controls: 'Управление', why: 'Почему так' },
   };
 
-  $('last-key').textContent = list.length;
-
   let current = -1;
   let cleanup = null;
   let mountId = 0;
 
+  const sectionOf = il => il.section || DEFAULT_SECTION;
+  const groups = {};
+
+  function group(key) {
+    if (groups[key]) return groups[key];
+    const count = list.filter(il => sectionOf(il) === key).length;
+    const items = h('div', { className: 'nav-items' });
+    nav.append(h('details', { className: 'nav-group', open: key === DEFAULT_SECTION },
+      h('summary', { className: 'stamp' }, h('span', null, SECTIONS[key]), h('span', { className: 'nav-count' }, count)),
+      items));
+    return groups[key] = items;
+  }
+
   const buttons = list.map((il, i) => {
-    if (il.section && il.section !== list[i - 1]?.section) {
-      const d = document.createElement('span');
-      d.className = 'nav-section';
-      d.textContent = SECTIONS[il.section];
-      nav.appendChild(d);
-    }
-    const b = document.createElement('button');
-    b.type = 'button';
+    const b = h('button', { type: 'button', className: 'nav-item', onclick: () => show(i) });
     b.innerHTML = `<span>${i + 1}</span>${il.title}`;
-    b.addEventListener('click', () => show(i));
-    nav.appendChild(b);
+    group(sectionOf(il)).append(b);
     return b;
   });
 
@@ -61,6 +65,7 @@
       return p;
     }));
     buttons.forEach((b, k) => b.setAttribute('aria-current', String(k === i)));
+    buttons[i].closest('details').open = true;
     buttons[i].scrollIntoView({ block: 'nearest', inline: 'nearest' });
     document.title = `${il.title} — Illusions`;
 

@@ -49,14 +49,14 @@ ILLUSIONS.push({
     /* 0–10 scale of buttons; nothing is pre-selected. */
     function scale(name) {
       let b = '';
-      for (let v = 0; v <= 10; v++) b += `<button type="button" class="btn" data-v="${v}">${v}</button>`;
+      for (let v = 0; v <= 10; v++) b += `<button type="button" class="wr-btn wr-btn-quiet" data-v="${v}">${v}</button>`;
       return `<div class="who-scale" data-name="${name}">${b}</div>
               <div class="who-scale-ends"><span>не виноват</span><span>полностью виноват</span></div>`;
     }
 
     function choice(name, options) {
       return `<div class="who-choice" data-name="${name}">` +
-        options.map(([v, t]) => `<button type="button" class="btn" data-v="${v}">${t}</button>`).join('') + '</div>';
+        options.map(([v, t]) => `<button type="button" class="wr-btn wr-btn-quiet" data-v="${v}">${t}</button>`).join('') + '</div>';
     }
 
     /* Wires .who-scale / .who-choice groups; `go` is enabled once every group has a pick. */
@@ -82,7 +82,7 @@ ILLUSIONS.push({
            <p class="who-line">Соперник — программа. Число раундов заранее не объявляется.</p>
            <p class="who-line">Связь ненадёжна: изредка, примерно в одном ходе из тридцати, ход доходит до другой стороны противоположным. Это касается обеих сторон.</p>
            <p class="who-line">Цель — набрать как можно больше очков. Счёт — в конце игры.</p>
-           <button type="button" class="btn btn-primary mind-go">Начать</button>
+           <button type="button" class="wr-btn wr-btn-curtain mind-go">Начать</button>
          </div>`;
       root.querySelector('.mind-go').addEventListener('click', () => { phase = 'play'; render(); });
     }
@@ -93,7 +93,7 @@ ILLUSIONS.push({
       const last = r ? `Раунд ${r}: вы ${DID[u[r - 1]]}, соперник ${SAW[us[r - 1]]}.` : '&nbsp;';
       root.innerHTML =
         `<div class="mind-col wide">
-           <p class="mind-step">Раунд ${r + 1}</p>
+           <p class="mind-step stamp">Раунд ${r + 1}</p>
            ${payTable()}
            <div class="who-moves">
              <button type="button" class="who-btn c" data-m="C">${LABEL.C}<small>1</small></button>
@@ -117,20 +117,20 @@ ILLUSIONS.push({
       setTimeout(() => { busy = false; }, 250);
       renderPlay();
       const b = root.querySelector(`.who-btn[data-m="${m}"]`);
-      if (b) b.classList.add('down');
+      if (b) { b.classList.add('down'); setTimeout(() => b.classList.remove('down'), 90); }
     }
 
     function renderInside() {
       root.innerHTML =
         `<div class="mind-col">
-           <p class="mind-step">Игра окончена</p>
+           <p class="mind-step stamp">Игра окончена</p>
            <p class="mind-big">Кто начал конфликт?</p>
            ${choice('who', [['bot', 'Соперник'], ['user', 'Я'], ['none', 'Никто'], ['nothing', 'Конфликта не было']])}
            <h4>Насколько в том, как прошла игра, виноваты вы?</h4>
            ${scale('self')}
            <h4>А соперник?</h4>
            ${scale('bot')}
-           <button type="button" class="btn btn-primary mind-go">Дальше</button>
+           <button type="button" class="wr-btn wr-btn-curtain mind-go">Дальше</button>
          </div>`;
       wireForm(root.querySelector('.mind-go'), v => {
         inside = v;
@@ -155,7 +155,7 @@ ILLUSIONS.push({
       const rec = recs[rk];
       root.innerHTML =
         `<div class="mind-col wide">
-           <p class="mind-step">Партия ${rk + 1} из 3</p>
+           <p class="mind-step stamp">Партия ${rk + 1} из 3</p>
            <p class="mind-sub">Три партии этой игры, по ${rec.a.length} раундов, игроки А и Б. Ходы показаны такими, какими их сделали.</p>
            ${recordGrid(rec)}
            <div class="who-legend">${cell('C')} сотрудничать ${cell('D')} предать</div>
@@ -165,7 +165,7 @@ ILLUSIONS.push({
            ${scale('a')}
            <h4>Игрок Б?</h4>
            ${scale('b')}
-           <button type="button" class="btn btn-primary mind-go">Дальше</button>
+           <button type="button" class="wr-btn wr-btn-curtain mind-go">Дальше</button>
          </div>`;
       wireForm(root.querySelector('.mind-go'), v => {
         ratings[rk] = v;
@@ -179,7 +179,7 @@ ILLUSIONS.push({
         `<div class="mind-col">
            <p class="mind-big">Была ли среди этих трёх партий ваша?</p>
            ${choice('k', [['no', 'Нет'], ['0', '№ 1'], ['1', '№ 2'], ['2', '№ 3'], ['?', 'Не знаю']])}
-           <button type="button" class="btn btn-primary mind-go">Показать, что было</button>
+           <button type="button" class="wr-btn wr-btn-curtain mind-go">Показать, что было</button>
          </div>`;
       wireForm(root.querySelector('.mind-go'), v => {
         recog = v.k;
@@ -271,7 +271,7 @@ ILLUSIONS.push({
            </table>
            <p class="who-line">Не зная, что это вы, вы оценили свои ходы ${cmp(dSelf)}, а ходы соперника — ${cmp(dBot)}.</p>
            <p class="mind-note">В записи видны только сделанные ходы. Ответ на искажённый ход выглядит в ней как предательство без повода.</p>
-           <button type="button" class="btn mind-go">Сыграть ещё раз</button>
+           <button type="button" class="wr-btn wr-btn-quiet mind-go">Сыграть ещё раз</button>
          </div>`;
       root.querySelector('.mind-go').addEventListener('click', start);
     }

@@ -102,7 +102,7 @@ function addText(parent, { label, value, maxLength = 40, onInput }) {
 function addButton(parent, { label, onClick }) {
   const b = document.createElement('button');
   b.type = 'button';
-  b.className = 'btn';
+  b.className = 'wr-btn wr-btn-quiet';
   b.textContent = label;
   b.addEventListener('click', onClick);
   parent.appendChild(b);

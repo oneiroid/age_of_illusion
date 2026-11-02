@@ -91,7 +91,7 @@ ILLUSIONS.push({
       if (phase === 'blind') {
         root.innerHTML =
           `<div class="mind-col">
-             <p class="mind-step">Раунд 1 из 2</p>
+             <p class="mind-step stamp">Раунд 1 из 2</p>
              <p class="mind-big"><b>${seq.length}</b> / ${N}</p>
              ${pad()}
              ${strip(seq)}
@@ -100,7 +100,7 @@ ILLUSIONS.push({
         const n = hits.length - N, h = hits.slice(N).filter(Boolean).length;
         root.innerHTML =
           `<div class="mind-col">
-             <p class="mind-step">Раунд 2 из 2 · ${n} / ${N2}</p>
+             <p class="mind-step stamp">Раунд 2 из 2 · ${n} / ${N2}</p>
              <p class="mind-big">Машина угадала <b>${h}</b> из ${n}</p>
              <p class="mind-sub">${n ? `Ставка была на ${KEYS[lastBet]}: ${hits[hits.length - 1] ? 'угадала' : 'не угадала'}` : 'Ставка показывается после нажатия'}</p>
              ${pad()}
@@ -152,7 +152,7 @@ ILLUSIONS.push({
            <h4>Монета: ${N} значений из генератора случайных чисел</h4>
            ${strip(coin, coinHits)}
            <p class="mind-note">Точка — машина угадала это нажатие.</p>
-           <button type="button" class="btn btn-primary mind-go">Раунд 2: ставка видна после нажатия</button>
+           <button type="button" class="wr-btn wr-btn-curtain mind-go">Раунд 2: ставка видна после нажатия</button>
          </div>`;
       root.querySelector('.mind-go').addEventListener('click', () => { phase = 'live'; renderPlay(); });
     }
@@ -163,7 +163,7 @@ ILLUSIONS.push({
       const r1 = Math.round(100 * h1 / N);
       root.innerHTML =
         `<div class="mind-col wide">
-           <p class="mind-step">Раунд 2 — итог</p>
+           <p class="mind-step stamp">Раунд 2 — итог</p>
            <p class="mind-big">Угадано <b>${h2}</b> из ${N2}</p>
            <p class="mind-sub">В первом раунде — ${h1} из ${N} (${r1}%). Во втором вы знали о программе и видели каждую её ставку.</p>
            <h4>Раунд 2</h4>
@@ -171,7 +171,7 @@ ILLUSIONS.push({
            <h4>Раунд 1</h4>
            ${strip(seq.slice(0, N), hits.slice(0, N))}
            <p class="mind-note">Точка — машина угадала это нажатие.</p>
-           <button type="button" class="btn mind-go">Начать заново</button>
+           <button type="button" class="wr-btn wr-btn-quiet mind-go">Начать заново</button>
          </div>`;
       root.querySelector('.mind-go').addEventListener('click', start);
     }

@@ -1,0 +1,232 @@
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text);
+  font-family: var(--font-text);
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.wr-row { display: flex; flex-wrap: wrap; gap: var(--space-16); align-items: center; padding: var(--space-24); }
+.wr-stack { display: flex; flex-direction: column; gap: var(--space-24); padding: var(--space-24); }
+
+/* Ghost: doubled display line */
+.wr-ghost .wr-quote-body, .wr-ghost-text { text-shadow: var(--ghost-red), var(--ghost-lamp); }
+
+/* Button */
+.wr-btn {
+  font-family: var(--font-text);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: var(--space-12) var(--space-24);
+  border-radius: var(--radius-0);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 900ms var(--cozy-ease), box-shadow 900ms var(--cozy-ease), color 900ms var(--cozy-ease);
+}
+.wr-btn:hover:not(:disabled) { animation: wr-stutter 1100ms linear 1 both; }
+.wr-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; animation: wr-ring 1200ms linear 1 both; }
+.wr-btn:disabled { cursor: not-allowed; opacity: 0.4; }
+.wr-btn-curtain { background: var(--curtain); color: var(--on-curtain); }
+.wr-btn-curtain:hover:not(:disabled), .wr-btn-curtain:active:not(:disabled) { background: var(--curtain-deep); box-shadow: var(--fold); }
+.wr-btn-quiet { background: transparent; color: var(--text); border-color: var(--border-strong); }
+.wr-btn-quiet:hover:not(:disabled) { background: var(--surface); }
+.wr-btn-lamp { background: transparent; color: var(--lamp); padding-left: 0; padding-right: 0; text-decoration: underline; text-underline-offset: 5px; }
+.wr-btn-lamp:hover:not(:disabled) { text-decoration-thickness: 2px; }
+
+/* Stamp */
+.wr-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: var(--space-4) var(--space-8);
+  border: 1px solid currentColor;
+  border-radius: var(--radius-2);
+}
+.wr-stamp-neutral { color: var(--text-muted); }
+.wr-stamp-lamp { color: var(--lamp); background: var(--lamp-soft); }
+.wr-stamp-curtain { color: var(--on-curtain); background: var(--curtain); border-color: var(--curtain); }
+.wr-stamp-dot { width: 8px; height: 8px; border-radius: var(--radius-round); background: currentColor; animation: wr-cozy-in var(--cozy-duration) var(--cozy-ease) both, wr-light-fails var(--flicker-duration) linear var(--dread-delay) infinite; }
+
+/* Field */
+.wr-field { display: flex; flex-direction: column; gap: var(--space-8); max-width: 360px; }
+.wr-field-label { font-size: 14px; line-height: 20px; font-weight: 600; }
+.wr-field-input {
+  font-family: var(--font-text);
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-2);
+  padding: var(--space-8) var(--space-12);
+}
+.wr-field-input::placeholder { color: var(--text-muted); }
+.wr-field-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; animation: wr-ring 1200ms linear 1 both; }
+.wr-field-hint { font-size: 14px; line-height: 20px; color: var(--text-muted); }
+.wr-field-error .wr-field-input { border-color: var(--curtain-text); }
+.wr-field-error .wr-field-hint { color: var(--curtain-text); }
+
+/* Quote */
+.wr-quote { margin: 0; display: flex; flex-direction: column; gap: var(--space-8); max-width: 640px; }
+.wr-quote-body { margin: 0; font-family: var(--font-display); font-style: italic; font-weight: 400; color: var(--text); }
+.wr-quote-m .wr-quote-body { font-size: 30px; line-height: 38px; }
+.wr-quote-l .wr-quote-body { font-size: 44px; line-height: 50px; }
+.wr-quote-echo { font-family: var(--font-display); font-style: italic; font-size: 16px; line-height: 20px; color: var(--text-muted); opacity: 0.55; transform: scaleX(-1); text-align: right; }
+.wr-quote-source { font-family: var(--font-mono); font-size: 13px; line-height: 20px; color: var(--text-muted); margin-top: var(--space-4); }
+
+/* WakeClock */
+.wr-clock { display: inline-flex; flex-direction: column; align-items: center; gap: var(--space-8); }
+.wr-clock-time { font-family: var(--font-display); font-size: 128px; line-height: 0.9; color: var(--marble); text-shadow: var(--ghost-red), var(--ghost-lamp); font-variant-numeric: tabular-nums; animation: wr-cozy-in var(--cozy-duration) var(--cozy-ease) both, wr-brownout var(--flicker-duration) linear var(--dread-delay) infinite; }
+[data-theme="insomnia"] .wr-clock-time { color: var(--text); }
+.wr-clock-colon { display: inline-block; margin: 0 0.04em; animation: wr-light-fails var(--flicker-duration) linear var(--dread-delay) infinite; }
+.wr-clock-note { font-family: var(--font-mono); font-size: 13px; line-height: 20px; color: var(--text-muted); letter-spacing: 0.04em; animation: wr-cozy-in var(--cozy-duration) var(--cozy-ease) 600ms both; }
+
+/* The light arc. Phase 1 cozy: warm, slow fade-in. Phase 2 cooling: the warmth drains.
+   Phase 3 failing: an endless 9s cycle of a sag, one blink, a two-flash burst and a brownout.
+   Never more than two flashes in any one second. */
+.wr-enter { animation: wr-cozy-in var(--cozy-duration) var(--cozy-ease) both, wr-stutter 1100ms linear var(--cozy-duration) 1; }
+@keyframes wr-cozy-in {
+  0% { opacity: 0; filter: sepia(0.7) brightness(0.6); transform: translateY(4px); }
+  60% { opacity: 1; filter: sepia(0.4) brightness(1.1); transform: none; }
+  100% { opacity: 1; filter: none; transform: none; }
+}
+@keyframes wr-light-fails {
+  0%, 18% { opacity: 1; }
+  26% { opacity: 0.55; }
+  32%, 44.9% { opacity: 1; }
+  45%, 46.4% { opacity: 0.12; }
+  46.5%, 70.9% { opacity: 1; }
+  71%, 72.4% { opacity: 0.08; }
+  72.5%, 73.9% { opacity: 0.9; }
+  74%, 75.9% { opacity: 0.12; }
+  76%, 88% { opacity: 1; }
+  92% { opacity: 0.4; }
+  97%, 100% { opacity: 1; }
+}
+@keyframes wr-brownout {
+  0%, 18% { opacity: 1; }
+  26% { opacity: 0.7; }
+  32%, 88% { opacity: 1; }
+  92% { opacity: 0.45; }
+  97%, 100% { opacity: 1; }
+}
+@keyframes wr-stutter {
+  0%, 70% { opacity: 1; }
+  73% { opacity: 0.45; }
+  77% { opacity: 1; }
+  84% { opacity: 0.65; }
+  90%, 100% { opacity: 1; }
+}
+@keyframes wr-ring {
+  0%, 50% { outline-color: var(--focus); }
+  54%, 58% { outline-color: transparent; }
+  60%, 68% { outline-color: var(--focus); }
+  70%, 74% { outline-color: transparent; }
+  76%, 100% { outline-color: var(--focus); }
+}
+
+/* Veil */
+.wr-veil {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: var(--background);
+  background-size: cover;
+  background-position: center;
+}
+.wr-veil::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.85) 100%);
+}
+.wr-veil-shape { position: absolute; z-index: 1; right: -2%; bottom: 5%; width: 58%; height: auto; opacity: 0; filter: blur(1.5px) drop-shadow(0 -3px 4px rgba(212, 90, 166, 0.45)); animation: wr-shape var(--flicker-duration) linear var(--dread-delay) infinite; }
+.wr-veil-shape path { fill: var(--blade); }
+.wr-veil-light {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background-color: var(--blade);
+  mix-blend-mode: multiply;
+  animation:
+    wr-veil-dawn var(--cozy-duration) var(--cozy-ease) both,
+    wr-veil-cool var(--cool-duration) ease-in var(--cozy-duration) forwards,
+    wr-veil-fail var(--flicker-duration) linear var(--dread-delay) infinite;
+}
+@keyframes wr-veil-dawn {
+  0% { background-color: var(--blade); opacity: 1; }
+  100% { background-color: var(--hearth); opacity: 0.4; }
+}
+@keyframes wr-veil-cool {
+  0% { background-color: var(--hearth); opacity: 0.4; }
+  100% { background-color: var(--blade); opacity: 0.5; }
+}
+@keyframes wr-veil-fail {
+  0%, 18% { background-color: var(--blade); opacity: 0.5; }
+  26% { opacity: 0.72; }
+  32%, 44.9% { opacity: 0.5; }
+  45%, 46.4% { opacity: 0.94; }
+  46.5%, 70.9% { opacity: 0.48; }
+  71%, 72.4% { opacity: 0.96; }
+  72.5%, 73.9% { opacity: 0.42; }
+  74%, 75.9% { opacity: 0.94; }
+  76%, 88% { opacity: 0.5; }
+  92% { opacity: 0.82; }
+  97%, 100% { background-color: var(--blade); opacity: 0.5; }
+}
+/* The room is empty until the first blink. When the light comes back, something is on the floor. */
+@keyframes wr-shape {
+  0%, 46.4% { opacity: 0; }
+  46.5%, 96% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.wr-veil::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.wr-veil-content { position: relative; z-index: 4; animation: wr-cozy-in var(--cozy-duration) var(--cozy-ease) 400ms both; text-align: center; padding: var(--space-40) var(--space-24); color: var(--on-curtain); }
+.wr-veil-content .wr-veil-title { font-family: var(--font-display); font-size: 64px; line-height: 1; margin: 0; text-shadow: var(--ghost-red), var(--ghost-lamp); }
+.wr-veil-content .wr-veil-sub { font-family: var(--font-mono); font-size: 13px; line-height: 20px; margin-top: var(--space-16); color: var(--on-curtain); opacity: 0.8; }
+
+/* MirrorPanel */
+.wr-mirror { display: grid; grid-template-columns: 1fr var(--space-64) 1fr; align-items: stretch; background: var(--surface); border-radius: var(--radius-0); }
+.wr-mirror-lit { box-shadow: var(--lamp-glow); }
+.wr-mirror-side { padding: var(--space-24); display: flex; flex-direction: column; gap: var(--space-8); }
+.wr-mirror-left { text-align: right; align-items: flex-end; }
+.wr-mirror-right { text-align: left; align-items: flex-start; }
+.wr-mirror-axis { position: relative; background: var(--silver); }
+.wr-mirror-spike { position: absolute; left: 50%; top: 10%; bottom: 10%; width: 10px; transform: translateX(-50%); background: var(--blade); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+
+/* ChevronRule */
+.wr-chev { display: block; }
+.wr-chev-ground { fill: var(--floor-dark); }
+.wr-chev-stripe { fill: none; stroke: var(--floor-light); stroke-linejoin: miter; stroke-linecap: square; }
+
+/* Reduced motion: no arc, no flicker. The Veil shows the room as it ends: dim, cold, not empty. */
+@media (prefers-reduced-motion: reduce) {
+  .wr-btn { transition: none; }
+  .wr-btn:hover:not(:disabled), .wr-btn:focus-visible, .wr-field-input:focus-visible,
+  .wr-enter, .wr-stamp-dot, .wr-clock-time, .wr-clock-colon, .wr-clock-note,
+  .wr-veil-content, .wr-veil-light, .wr-veil-shape { animation: none; }
+  .wr-veil-light { opacity: 0.5; }
+  .wr-veil-shape { opacity: 1; }
+}

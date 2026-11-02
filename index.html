@@ -1,25 +1,39 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="lodge">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Illusions</title>
+  <link rel="stylesheet" href="design/waking-room/tokens.css">
+  <link rel="stylesheet" href="design/waking-room/components.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header class="bar">
-    <h1 class="brand">Illusions</h1>
-    <nav id="nav" class="nav" aria-label="Illusions"></nav>
-    <button id="fullscreen" class="btn" type="button" title="Fullscreen (F)">Fullscreen <kbd>F</kbd></button>
-  </header>
-
   <main class="layout">
+    <aside class="side">
+      <h1 class="brand heading">Illusions</h1>
+      <svg class="wr-chev brand-floor" width="100%" height="28" aria-hidden="true">
+        <defs>
+          <pattern id="floor" width="24" height="28" patternUnits="userSpaceOnUse">
+            <rect class="wr-chev-ground" width="24" height="28"></rect>
+            <path class="wr-chev-stripe" d="M0 12 L12 2 L24 12 M0 26 L12 16 L24 26" stroke-width="5"></path>
+          </pattern>
+        </defs>
+        <rect width="100%" height="28" fill="url(#floor)"></rect>
+      </svg>
+      <nav id="nav" class="nav" aria-label="Illusions"></nav>
+      <div class="side-foot">
+        <button id="fullscreen" class="wr-btn wr-btn-quiet" type="button" title="Fullscreen (F)">Fullscreen <kbd>F</kbd></button>
+        <p class="keys"><kbd>←</kbd> <kbd>→</kbd> or <kbd>1</kbd>–<kbd>9</kbd> switch</p>
+      </div>
+    </aside>
+
     <section id="stage" class="stage" aria-live="off"></section>
 
     <aside class="panel">
-      <p id="index" class="index"></p>
-      <h2 id="title" class="title"></h2>
-      <p id="credit" class="credit"></p>
+      <p id="index" class="index wr-stamp wr-stamp-neutral"></p>
+      <h2 id="title" class="title heading wr-ghost-text"></h2>
+      <p id="credit" class="credit caption"></p>
 
       <h3 id="howto-h">How to view</h3>
       <p id="howto"></p>
@@ -38,8 +52,6 @@
         <summary id="why-h">Why it happens</summary>
         <div id="why-body"></div>
       </details>
-
-      <p class="keys"><kbd>←</kbd> <kbd>→</kbd> or <kbd>1</kbd>–<kbd id="last-key">9</kbd> switch · <kbd>F</kbd> fullscreen</p>
     </aside>
   </main>
 
@@ -49,10 +61,10 @@
   <script src="js/illusions/spiral.js"></script>
   <script src="js/illusions/feet.js"></script>
   <script src="js/illusions/breathing.js"></script>
-  <script src="js/illusions/ghost-word.js"></script>
   <script src="js/illusions/snakes.js"></script>
   <script src="js/illusions/silencing.js"></script>
   <script src="js/illusions/checker-shadow.js"></script>
+  <script src="js/illusions/ghost-word.js"></script>
   <script src="js/mind/oracle-model.js"></script>
   <script src="js/illusions/oracle.js"></script>
   <script src="js/mind/ninety-model.js"></script>

@@ -73,7 +73,7 @@ ILLUSIONS.push({
       const it = items[i];
       root.innerHTML =
         `<div class="mind-col">
-           <p class="mind-step">Вопрос ${i + 1} из ${N}</p>
+           <p class="mind-step stamp">Вопрос ${i + 1} из ${N}</p>
            <p class="mind-big ninety-q">${it.q}</p>
            <p class="mind-sub">${it.unit || '&nbsp;'}</p>
            <div class="ninety-fields">
@@ -82,7 +82,7 @@ ILLUSIONS.push({
              ${field('hi', 'Верхняя граница')}
            </div>
            <p class="mind-note ninety-msg">Ответ лежит между границами с вероятностью 90%.</p>
-           <button type="button" class="btn btn-primary mind-go">Дальше</button>
+           <button type="button" class="wr-btn wr-btn-curtain mind-go">Дальше</button>
          </div>`;
       const [lo, mid, hi] = ['lo', 'mid', 'hi'].map(c => root.querySelector('input.' + c));
       const go = root.querySelector('.mind-go');
@@ -94,7 +94,7 @@ ILLUSIONS.push({
         const order = v[0] <= v[1] && v[1] <= v[2];
         msg.textContent = order
           ? 'Ответ лежит между границами с вероятностью 90%.'
-          : 'Нужно: нижняя граница ≤ догадка ≤ верхняя граница.';
+          : 'Ошибка. Нужно: нижняя граница ≤ догадка ≤ верхняя граница.';
         msg.classList.toggle('bad', !order);
         return order;
       };
@@ -112,7 +112,7 @@ ILLUSIONS.push({
            <p class="mind-big">Сколько из ${N} ваших диапазонов содержат правильный ответ?</p>
            <p class="mind-sub">Ваша оценка, от 0 до ${N}.</p>
            <div class="ninety-fields one">${field('n', 'Попаданий')}</div>
-           <button type="button" class="btn btn-primary mind-go">Показать ответы</button>
+           <button type="button" class="wr-btn wr-btn-curtain mind-go">Показать ответы</button>
          </div>`;
       const f = root.querySelector('input.n');
       const go = root.querySelector('.mind-go');
@@ -133,15 +133,15 @@ ILLUSIONS.push({
       const it = items[i];
       root.innerHTML =
         `<div class="mind-col">
-           <p class="mind-step">Ответ ${i + 1} из ${N}</p>
+           <p class="mind-step stamp">Ответ ${i + 1} из ${N}</p>
            <p class="mind-sub ninety-recall-q">${it.q}</p>
            <p class="mind-big"><b>${fmt(it.a)}</b>${unit(it)}</p>
            <p class="mind-note">Вспомните без подсказок, что вы написали.</p>
            <div class="ninety-fields one">${field('r', 'Ваша лучшая догадка была')}</div>
            <p class="ninety-ask">Правильный ответ попал в ваш диапазон?</p>
            <div class="ninety-yn">
-             <button type="button" class="btn" data-v="1">Попал</button>
-             <button type="button" class="btn" data-v="0">Не попал</button>
+             <button type="button" class="wr-btn wr-btn-quiet" data-v="1">Попал</button>
+             <button type="button" class="wr-btn wr-btn-quiet" data-v="0">Не попал</button>
            </div>
          </div>`;
       const f = root.querySelector('input.r');
@@ -223,7 +223,7 @@ ILLUSIONS.push({
              <span><i class="ninety-mark ans"></i>ответ</span>
            </div>
            ${items.map((it, k) => row(it, ans[k])).join('')}
-           <button type="button" class="btn mind-go">Новые вопросы</button>
+           <button type="button" class="wr-btn wr-btn-quiet mind-go">Новые вопросы</button>
          </div>`;
       root.querySelector('.mind-go').addEventListener('click', start);
     }
