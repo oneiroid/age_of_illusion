@@ -11,6 +11,16 @@ ILLUSIONS.push({
     'Local contrast: B is surrounded by darker squares, A by lighter ones. A square lighter than its neighbours is probably a light square, whatever the lighting, so B is pushed up and A down.',
     'Edge type: the shadow has a soft, gradual border while the checks meet in sharp edges and X-shaped junctions. The visual system treats gradual changes as illumination and sharp ones as paint, so it attributes the darkness around B to light, not to the squares. Remove the context (Hide the scene) and only the luminance remains: the two squares match.',
   ],
+  ru: {
+    title: 'Тень на шахматной доске',
+    howto: 'Сравните клетку, отмеченную A, с клеткой, отмеченной B.',
+    expect: 'A выглядит тёмно-серой, B — почти белой. Это один и тот же серый: обе нарисованы с одинаковыми значениями пикселей. Включите «Соединительная полоса» или «Скрыть сцену», чтобы это увидеть.',
+    why: [
+      'Глаз получает яркость — свет, отражённый в его сторону, — а воспринимаем мы светлоту, оценку цвета самой поверхности. Тень приглушает всё внутри себя, поэтому белая клетка в тени может отражать меньше света, чем тёмная клетка на свету. Чтобы сообщать о краске, а не о свете, зрительная система вычитает тень, и здесь из-за этого две равные клетки выглядят совсем разными.',
+      'Локальный контраст: B окружена более тёмными клетками, A — более светлыми. Клетка светлее соседей, вероятно, светлая при любом освещении, поэтому B кажется светлее, а A темнее.',
+      'Тип края: у тени мягкая плавная граница, а клетки сходятся резкими краями и X-образными стыками. Зрительная система считает плавные перепады освещением, а резкие — краской, поэтому темноту вокруг B она относит к свету, а не к клеткам. Уберите контекст («Скрыть сцену»), и останется только яркость: клетки совпадают.',
+    ],
+  },
 
   mount(stage, controls) {
     const N = 5;
@@ -28,11 +38,11 @@ ILLUSIONS.push({
     const view = createCanvas(stage, v => { shadowCanvas = null; draw(v); });
 
     addToggle(controls, {
-      label: 'Connecting bar (same grey)', value: false,
+      label: tr('Connecting bar (same grey)', 'Соединительная полоса (тот же серый)'), value: false,
       onChange: v => { bar = v; draw(); },
     });
     addToggle(controls, {
-      label: 'Hide the scene', value: false,
+      label: tr('Hide the scene', 'Скрыть сцену'), value: false,
       onChange: v => { hide = v; draw(); },
     });
 

@@ -11,6 +11,16 @@ ILLUSIONS.push({
     'One explanation is competition: the moving field and the stationary targets are treated as rival interpretations, as in binocular rivalry, and the dominant moving surface suppresses the dots. Another is that the brain treats a perfectly stationary spot inside a moving scene as a defect on the retina and fills it in with the surrounding pattern.',
     'Dots disappear more often when they are further from fixation and when the pattern moves faster. They reappear briefly if the pattern is stopped, or if a dot is flashed.',
   ],
+  ru: {
+    title: 'Слепота, вызванная движением',
+    howto: 'Неотрывно смотрите на мигающую зелёную точку в центре. Не двигайте глазами хотя бы 15 секунд.',
+    expect: 'Три жёлтые точки исчезают — по одной, парами или все сразу — на несколько секунд, затем появляются снова. На экране они не меняются.',
+    why: [
+      'Жёлтые точки яркие, контрастные и неподвижные, но вращающийся синий узор вытесняет их из осознания. Ранние зрительные области продолжают их обрабатывать; точки теряются на более позднем этапе, который определяет, что дойдёт до сознательного восприятия.',
+      'Одно из объяснений — конкуренция: движущееся поле и неподвижные цели воспринимаются как соперничающие интерпретации, как при бинокулярной конкуренции, и доминирующая движущаяся поверхность подавляет точки. Другое объяснение: мозг принимает идеально неподвижное пятно внутри движущейся сцены за дефект сетчатки и заполняет его окружающим узором.',
+      'Точки исчезают чаще, когда они дальше от точки фиксации и когда узор движется быстрее. Они ненадолго появляются снова, если узор остановить или если точка мигнёт.',
+    ],
+  },
 
   mount(stage) {
     const OMEGA = 1.9;       // grid rotation, rad/s

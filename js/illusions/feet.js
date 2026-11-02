@@ -11,6 +11,16 @@ ILLUSIONS.push({
     'The block length equals one black + white stripe pair, so both of a block’s edges are always on the same stripe colour. The pale yellow block is low-contrast over white stripes and high-contrast over black ones; the dark blue block is the reverse. Each block therefore seems to speed up and slow down, and the two do so in antiphase.',
     'The effect is strongest in peripheral vision, where the speed estimate relies more on these contrast-dependent motion signals and less on tracking position.',
   ],
+  ru: {
+    title: 'Шагающие ступни',
+    howto: 'Смотрите на полосы посередине между двумя блоками, а не прямо на блоки.',
+    expect: 'Блоки будто шагают: один рывком уходит вперёд, другой отстаёт, и они чередуются, как пара ступней. Сдвиньте «Контраст полос» до 0: всё это время они двигались вместе с одной постоянной скоростью.',
+    why: [
+      'Воспринимаемая скорость зависит от контраста: край с низким контрастом выглядит медленнее края с высоким контрастом, движущегося с той же скоростью.',
+      'Длина блока равна одной паре чёрной и белой полос, поэтому оба края блока всегда находятся на полосах одного цвета. Бледно-жёлтый блок низкоконтрастен на белых полосах и высококонтрастен на чёрных; у тёмно-синего блока наоборот. Поэтому каждый блок будто то ускоряется, то замедляется, причём в противофазе с другим.',
+      'Эффект сильнее всего в периферическом зрении, где оценка скорости больше опирается на такие зависящие от контраста сигналы движения и меньше на отслеживание положения.',
+    ],
+  },
 
   mount(stage, controls) {
     let contrast = 1;
@@ -18,13 +28,13 @@ ILLUSIONS.push({
     let x = null;            // travelled distance, px
 
     addSlider(controls, {
-      label: 'Stripe contrast', min: 0, max: 100, value: 100,
+      label: tr('Stripe contrast', 'Контраст полос'), min: 0, max: 100, value: 100,
       format: v => v + '%',
       onInput: v => { contrast = v / 100; },
     });
     addSlider(controls, {
-      label: 'Speed', min: 10, max: 150, value: speed,
-      format: v => v + ' px/s',
+      label: tr('Speed', 'Скорость'), min: 10, max: 150, value: speed,
+      format: v => v + tr(' px/s', ' пикс/с'),
       onInput: v => { speed = v; },
     });
 

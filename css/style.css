@@ -20,7 +20,7 @@ kbd {
 }
 
 /* IM Fell English has no Cyrillic: Russian text would drop to the fallback while its digits stayed in IM Fell. */
-:lang(ru) .mind, :lang(ru) .title { --font-display: "Iowan Old Style", Georgia, serif; }
+:lang(ru) .mind, :lang(ru) .title, :lang(ru) .brand { --font-display: "Iowan Old Style", Georgia, serif; }
 
 /* ---------- layout ---------- */
 
@@ -82,6 +82,8 @@ kbd {
   min-height: 0;
   overflow-y: auto;
   padding: var(--space-8);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
 }
 
 .nav-group + .nav-group { margin-top: var(--space-8); }
@@ -166,6 +168,21 @@ kbd {
   gap: var(--space-12);
   padding: var(--space-16);
   border-top: 1px solid var(--border);
+}
+
+.lang-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.lang-switch .wr-btn { padding: var(--space-8) var(--space-12); transition: none; }
+.lang-switch .wr-btn + .wr-btn { margin-left: -1px; }
+
+.lang-switch .wr-btn[aria-pressed="true"] {
+  position: relative;
+  background: var(--lamp-soft);
+  border-color: var(--lamp);
+  box-shadow: inset 0 0 0 1px var(--lamp);
 }
 
 .keys {
@@ -517,7 +534,7 @@ kbd {
   .brand, .brand-floor, .keys { display: none; }
   .nav-items { display: flex; overflow-x: auto; scrollbar-width: none; }
   .nav-item { flex: none; width: auto; white-space: nowrap; }
-  .side-foot { padding: var(--space-8) var(--space-16); }
+  .side-foot { grid-template-columns: auto 1fr; padding: var(--space-8) var(--space-16); }
   .side-foot kbd { display: none; }
 }
 

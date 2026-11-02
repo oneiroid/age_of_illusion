@@ -11,6 +11,17 @@ ILLUSIONS.push({
     'High-contrast edges are processed slightly faster than low-contrast ones. When the image lands on a new patch of retina — after a saccade, a blink, or tiny fixational drifts — the black and white parts register a few milliseconds before the grey steps next to them. Motion detectors read that timing difference as movement (Conway et al., 2005; Backus & Oruç, 2005).',
     'Hold your gaze perfectly still and the rotation fades, because no new transients arrive; the effect is strongest in peripheral vision and right after eye movements (Murakami, Kitaoka & Ashida, 2006). Replace both grey steps with the same mid grey and the luminance sequence becomes symmetric, so the timing differences cancel.',
   ],
+  ru: {
+    title: 'Вращающиеся змеи',
+    credit: 'Akiyoshi Kitaoka, 2003 · по мотивам Fraser & Wilcox, 1979',
+    howto: 'Позвольте взгляду блуждать по картинке или посмотрите на один диск, а затем рядом с ним. Моргание помогает.',
+    expect: 'Диски, на которые вы не смотрите, медленно вращаются, соседние — в противоположные стороны. Диск, на который вы смотрите в упор, останавливается. На экране ничего не движется: картинка нарисована один раз и не перерисовывается. Выключите «Серые ступени»: вращение прекратится.',
+    why: [
+      'Каждое кольцо повторяет одни и те же четыре ступени: чёрная, тёмная (синяя), белая, светлая (жёлтая). Иллюзорное движение идёт в этом порядке: от чёрной к тёмной, от белой к светлой. Если порядок отзеркалить, направление меняется, поэтому соседние диски вращаются в противоположные стороны.',
+      'Края с высоким контрастом обрабатываются немного быстрее низкоконтрастных. Когда изображение попадает на новый участок сетчатки — после саккады, моргания или мелких дрейфов глаза, — чёрные и белые части регистрируются на несколько миллисекунд раньше соседних серых ступеней. Детекторы движения считывают эту разницу во времени как движение (Conway et al., 2005; Backus & Oruç, 2005).',
+      'Если совсем неподвижно удерживать взгляд, вращение угасает, потому что новых переходных сигналов не поступает; эффект сильнее всего в периферическом зрении и сразу после движений глаз (Murakami, Kitaoka & Ashida, 2006). Если заменить обе серые ступени одним средне-серым, последовательность яркостей становится симметричной и разницы во времени взаимно компенсируются.',
+    ],
+  },
 
   mount(stage, controls) {
     let colour = true;
@@ -19,11 +30,11 @@ ILLUSIONS.push({
     const view = createCanvas(stage, v => draw(v));
 
     addToggle(controls, {
-      label: 'Colour (blue / yellow steps)', value: true,
+      label: tr('Colour (blue / yellow steps)', 'Цвет (синие и жёлтые ступени)'), value: true,
       onChange: v => { colour = v; draw(); },
     });
     addToggle(controls, {
-      label: 'Grey steps', value: true,
+      label: tr('Grey steps', 'Серые ступени'), value: true,
       onChange: v => { steps = v; draw(); },
     });
 

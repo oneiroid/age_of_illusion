@@ -11,6 +11,16 @@ ILLUSIONS.push({
     'Noticing a change requires comparing an object with itself a moment earlier. When objects stand still the comparison is trivial — the same retinal location is compared over time. When a dense crowd of similar objects moves across the retina, the visual system must first work out which dot is which before it can compare them, and in the crowded periphery it fails to. The changes are still registered as the current colours, but not as change.',
     'The effect depends on motion across the retina, not motion in the world: tracking a dot with the eyes keeps it still on the retina and abolishes the silencing. It needs dense displays — it weakens when the dots are spaced more than about half their distance from fixation — and it grows with speed; Suchow & Alvarez found the threshold near 0.2 rotations per second.',
   ],
+  ru: {
+    title: 'Заглушение движением',
+    howto: 'Смотрите на белую точку в центре. Кольцо чередует фазы: 3 с покоя, 3 с вращения.',
+    expect: 'Пока кольцо неподвижно, каждая точка заметно меняет цвет. Когда оно вращается, точки будто перестают меняться или меняются гораздо медленнее. В обеих фазах они меняются с одной и той же скоростью. Проследите взглядом за одной точкой во время вращения: изменение её цвета снова заметно.',
+    why: [
+      'Каждая из 100 точек проходит по цветовому кругу со скоростью, заданной ниже, начиная со случайного оттенка. Скорость не зависит от того, движется ли кольцо.',
+      'Чтобы заметить изменение, нужно сравнить объект с ним же мгновение назад. Когда объекты неподвижны, это просто: сравнивается одно и то же место сетчатки во времени. Когда по сетчатке движется плотная толпа похожих объектов, зрительная система должна сначала понять, какая точка какая, и в тесной периферии ей это не удаётся. Текущие цвета по-прежнему регистрируются, но не как изменение.',
+      'Эффект зависит от движения по сетчатке, а не в мире: слежение за точкой глазами удерживает её на сетчатке неподвижной и отменяет заглушение. Нужны плотные изображения: эффект ослабевает, когда расстояние между точками больше примерно половины их удаления от точки фиксации. С ростом скорости он усиливается; Suchow и Alvarez нашли порог около 0,2 оборота в секунду.',
+    ],
+  },
 
   mount(stage, controls) {
     const N = 100;
@@ -33,17 +43,17 @@ ILLUSIONS.push({
     }
 
     addSlider(controls, {
-      label: 'Rotation speed', min: 0.05, max: 1, step: 0.05, value: speed,
-      format: v => v.toFixed(2) + ' rev/s',
+      label: tr('Rotation speed', 'Скорость вращения'), min: 0.05, max: 1, step: 0.05, value: speed,
+      format: v => decimal(v, 2) + tr(' rev/s', ' об/с'),
       onInput: v => { speed = v; },
     });
     addSlider(controls, {
-      label: 'Colour change rate', min: 0.1, max: 1.5, step: 0.1, value: rate,
-      format: v => v.toFixed(1) + ' cycles/s',
+      label: tr('Colour change rate', 'Скорость смены цвета'), min: 0.1, max: 1.5, step: 0.1, value: rate,
+      format: v => decimal(v, 1) + tr(' cycles/s', ' цикл/с'),
       onInput: v => { rate = v; },
     });
     addToggle(controls, {
-      label: 'Alternate still / turning (off: always turning)', value: true,
+      label: tr('Alternate still / turning (off: always turning)', 'Чередовать покой и вращение (выкл.: всегда вращение)'), value: true,
       onChange: v => { alternate = v; },
     });
 
@@ -67,7 +77,7 @@ ILLUSIONS.push({
           const ease = Math.min(1, p / 0.3, (PHASE - p) / 0.3);
           v = speed * ease * (k % 4 === 1 ? 1 : -1);
         }
-        status.set(k % 2 === 0 ? 'Still' : 'Turning');
+        status.set(k % 2 === 0 ? tr('Still', 'Покой') : tr('Turning', 'Вращение'));
       } else status.set('');
       angle += v * Math.PI * 2 * dt;
       phase += rate * 360 * dt;

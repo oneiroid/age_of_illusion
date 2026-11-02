@@ -11,6 +11,16 @@ ILLUSIONS.push({
     'As the square turns, those pieces slide in and out along the arms. Without the corners to tie them together, the visual system does not recover a single rigid rotation; it combines the local signals into a shape whose size pulsates.',
     'Once the corners become visible — through semi-transparent occluders, or through a wide gap — they provide unambiguous motion signals and the square snaps back to rigid rotation. Narrow gaps give the strongest breathing; at intermediate settings perception can flip between the two.',
   ],
+  ru: {
+    title: 'Дышащий квадрат',
+    howto: 'Смотрите на синюю фигуру в крестообразном просвете между оранжевыми квадратами.',
+    expect: 'Вращаясь, синяя фигура будто раздувается и сжимается, как при дыхании. Уменьшите «Непрозрачность заслонки»: это жёсткий квадрат, вращающийся с постоянной скоростью.',
+    why: [
+      'Сквозь рукава креста видны только короткие участки сторон квадрата. Движение прямого края в узком отверстии неоднозначно: сдвиг вдоль края невидим (проблема апертуры), поэтому каждый участок сигнализирует только о движении перпендикулярно себе.',
+      'Когда квадрат поворачивается, эти участки скользят вдоль рукавов туда и обратно. Без углов, которые связали бы их вместе, зрительная система не восстанавливает единое жёсткое вращение и объединяет локальные сигналы в фигуру, размер которой пульсирует.',
+      'Когда углы становятся видны — сквозь полупрозрачные заслонки или широкий просвет, — они дают однозначные сигналы движения, и квадрат сразу возвращается к жёсткому вращению. Узкий просвет даёт самое сильное «дыхание»; при промежуточных настройках восприятие может переключаться между двумя вариантами.',
+    ],
+  },
 
   mount(stage, controls) {
     const OMEGA = 0.6;        // rad/s
@@ -19,12 +29,12 @@ ILLUSIONS.push({
     let angle = 0;
 
     addSlider(controls, {
-      label: 'Occluder opacity', min: 0, max: 100, value: 100,
+      label: tr('Occluder opacity', 'Непрозрачность заслонки'), min: 0, max: 100, value: 100,
       format: v => v + '%',
       onInput: v => { opacity = v / 100; },
     });
     addSlider(controls, {
-      label: 'Gap width', min: 8, max: 50, value: 18,
+      label: tr('Gap width', 'Ширина просвета'), min: 8, max: 50, value: 18,
       format: v => v + '%',
       onInput: v => { gapFrac = v / 100; },
     });

@@ -11,7 +11,7 @@
 <body>
   <main class="layout">
     <aside class="side">
-      <h1 class="brand heading">Illusions</h1>
+      <h1 id="brand" class="brand heading">Illusions</h1>
       <svg class="wr-chev brand-floor" width="100%" height="28" aria-hidden="true">
         <defs>
           <pattern id="floor" width="24" height="28" patternUnits="userSpaceOnUse">
@@ -23,14 +23,18 @@
       </svg>
       <nav id="nav" class="nav" aria-label="Illusions"></nav>
       <div class="side-foot">
-        <button id="fullscreen" class="wr-btn wr-btn-quiet" type="button" title="Fullscreen (F)">Fullscreen <kbd>F</kbd></button>
-        <p class="keys"><kbd>←</kbd> <kbd>→</kbd> or <kbd>1</kbd>–<kbd>9</kbd> switch</p>
+        <div id="lang" class="lang-switch" role="group" aria-label="Language / Язык">
+          <button class="wr-btn wr-btn-quiet" type="button" data-lang="en" lang="en" aria-label="English">EN</button>
+          <button class="wr-btn wr-btn-quiet" type="button" data-lang="ru" lang="ru" aria-label="Русский">RU</button>
+        </div>
+        <button id="fullscreen" class="wr-btn wr-btn-quiet" type="button"><span id="fullscreen-label"></span> <kbd>F</kbd></button>
+        <p class="keys"><kbd>←</kbd> <kbd>→</kbd> <span id="keys-or"></span> <kbd>1</kbd>–<kbd>9</kbd> <span id="keys-switch"></span></p>
       </div>
     </aside>
 
     <section id="stage" class="stage" aria-live="off"></section>
 
-    <aside class="panel">
+    <aside id="panel" class="panel">
       <p id="index" class="index wr-stamp wr-stamp-neutral"></p>
       <h2 id="title" class="title heading wr-ghost-text"></h2>
       <p id="credit" class="credit caption"></p>
@@ -64,6 +68,8 @@
   <script src="js/illusions/snakes.js"></script>
   <script src="js/illusions/silencing.js"></script>
   <script src="js/illusions/checker-shadow.js"></script>
+  <script src="js/illusions/double-drift.js"></script>
+  <script src="js/illusions/kinetic-depth.js"></script>
   <script src="js/illusions/ghost-word.js"></script>
   <script src="js/mind/oracle-model.js"></script>
   <script src="js/illusions/oracle.js"></script>
