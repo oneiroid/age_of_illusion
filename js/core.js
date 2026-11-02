@@ -3,9 +3,24 @@
 /* Registry: each illusion script pushes a descriptor here.
    Descriptor: { id, title, credit, howto, expect, why: [paragraphs],
                  mount(stage, controls, { reveal }) -> cleanup() }
-   Optional: section ('mind' | 'ear'; default is visual), lang ('ru'; default 'en'),
+   Optional: section ('mind' | 'ear'; default is visual),
+   lang ('ru': shown in that language only; otherwise it follows the switcher),
+   ru ({ title, credit, howto, expect, why }: overrides for the Russian UI; credit may be omitted),
    gated (true: "expect" and "why" stay hidden until the module calls reveal()). */
 window.ILLUSIONS = [];
+
+/* UI language, 'en' or 'ru'. app.js sets it and remounts the illusion on a switch,
+   so mount() can read strings through tr() once. */
+window.LANG = 'en';
+
+function tr(en, ru) {
+  return window.LANG === 'ru' ? ru : en;
+}
+
+/* Fixed decimals with the UI language's separator: 0.40 / 0,40. */
+function decimal(v, digits) {
+  return v.toLocaleString(window.LANG, { minimumFractionDigits: digits, maximumFractionDigits: digits });
+}
 
 /* HiDPI canvas that fills `host` and tracks its size.
    Drawing coordinates are CSS pixels; view.w / view.h are the current size. */

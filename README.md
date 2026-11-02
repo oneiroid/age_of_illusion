@@ -1,6 +1,6 @@
 # Illusions
 
-Eight classic illusions plus one new design, rendered live on `<canvas>`. Vanilla HTML/CSS/JS, no build step. The only external request is Google Fonts, for the UI type.
+Ten classic illusions plus one new design, rendered live on `<canvas>`. Vanilla HTML/CSS/JS, no build step. The only external request is Google Fonts, for the UI type.
 
 | # | Illusion | Source | Type |
 |---|----------|--------|------|
@@ -12,7 +12,9 @@ Eight classic illusions plus one new design, rendered live on `<canvas>`. Vanill
 | 6 | Rotating Snakes | Kitaoka 2003; Fraser & Wilcox 1979 | static image; interactive: colour, grey steps |
 | 7 | Motion Silencing | Suchow & Alvarez, 2011 | animated (3 s still / 3 s turning); interactive: rotation speed, colour change rate |
 | 8 | Checker Shadow | Adelson, 1995 | static; interactive: connecting bar, hide scene |
-| 9 | Ghost Word | new design built on reverse phi (Anstis 1970) | interactive: word, step rate, dot size, polarity flip, pause |
+| 9 | Double Drift | Tse & Hsieh 2006; Shapiro et al. 2010; Lisi & Cavanagh 2015 | interactive: stripe drift, path tilt (nulling measure), true paths |
+| 10 | Kinetic Depth | Wallach & O’Connell 1953; Ullman 1979 | interactive: shape, rotation speed, dots, depth cue, pause |
+| 11 | Ghost Word | new design built on reverse phi (Anstis 1970) | interactive: word, step rate, dot size, polarity flip, pause |
 
 ### Разум (Mind, in Russian)
 
@@ -20,10 +22,10 @@ Demos of cognition rather than vision. The outcome and explanation stay hidden u
 
 | # | Demo | Source | Type |
 |---|------|--------|------|
-| 10 | Оракул (Oracle) | Shannon 1953; Hagelbarger 1956; Aaronson; data: Guseva et al. 2023 | 200 F/J presses; a model bets on each press beforehand. Round 2 (100 presses) shows each bet after the press |
-| 11 | Девяносто процентов (Ninety percent) | Alpert & Raiffa 1969/1982; Fischhoff & Beyth 1975; Hell et al. 1988 | 5 questions: best guess + 90% range, predicted hits, then recall of each guess with the answer shown. Pool of 36 questions; unseen ones first |
-| 12 | Кто начал? (Who started it?) | new design; noise in the iterated prisoner's dilemma: Molander 1985, Wu & Axelrod 1995; Pronin, Lin & Ross 2002 | 30 rounds against tit-for-tat over a channel that turns two cooperations into defections (bot → player early, player → bot later); blame ratings from inside, then three records rated from outside, one of them the player's own |
-| 13 | Твой принцип (Your principle) | new design on cases by Foot, Thomson, Kamm; Cushman, Young & Hauser 2006; Hauser et al. 2007; Greene et al. 2009 | pick a principle, judge 10 trolley cases built as one-feature pairs; answers checked against 8 principles; a revised principle is tested on a reserve case it is predicted to get wrong (up to 3 times) |
+| 12 | Оракул (Oracle) | Shannon 1953; Hagelbarger 1956; Aaronson; data: Guseva et al. 2023 | 200 F/J presses; a model bets on each press beforehand. Round 2 (100 presses) shows each bet after the press |
+| 13 | Девяносто процентов (Ninety percent) | Alpert & Raiffa 1969/1982; Fischhoff & Beyth 1975; Hell et al. 1988 | 5 questions: best guess + 90% range, predicted hits, then recall of each guess with the answer shown. Pool of 36 questions; unseen ones first |
+| 14 | Кто начал? (Who started it?) | new design; noise in the iterated prisoner's dilemma: Molander 1985, Wu & Axelrod 1995; Pronin, Lin & Ross 2002 | 30 rounds against tit-for-tat over a channel that turns two cooperations into defections (bot → player early, player → bot later); blame ratings from inside, then three records rated from outside, one of them the player's own |
+| 15 | Твой принцип (Your principle) | new design on cases by Foot, Thomson, Kamm; Cushman, Young & Hauser 2006; Hauser et al. 2007; Greene et al. 2009 | pick a principle, judge 10 trolley cases built as one-feature pairs; answers checked against 8 principles; a revised principle is tested on a reserve case it is predicted to get wrong (up to 3 times) |
 
 See also [`twophase/`](twophase/): a simulation of the DeF Two-Phase Law.
 
@@ -36,6 +38,8 @@ python3 -m http.server 8321
 ```
 
 Keys: `←` `→` or `1`–`9` switch, `F` fullscreen. The URL hash (`#lilac-chaser` etc.) selects an illusion.
+
+The EN / RU switcher in the sidebar sets the language of the interface and the visual illusions, and remembers the choice. The first visit follows the browser language. Switching restarts the current visual illusion and resets its controls. Разум demos are Russian only and keep running.
 
 ## Layout
 

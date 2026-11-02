@@ -8,3 +8,8 @@ Exceptions in this app:
 - Canvas stimuli keep their own colours, since those colours are the experiment.
 - No Veil, WakeClock, flicker or lamp glow next to the stage: changing light beside a stimulus interferes with viewing it.
 - Illusion text (`howto`, `expect`, `why`) and the Russian Mind demos keep their factual wording.
+- The UI is in English and Russian, not English only. Russian copy addresses the reader as «вы», like the Mind demos.
+
+## Translation
+- Visual illusions carry a `ru` block in the descriptor, and strings in `mount` go through `tr(en, ru)`. A new visual illusion needs both.
+- Mind demos set `lang: 'ru'` and stay Russian whatever the switcher says.

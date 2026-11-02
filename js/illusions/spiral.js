@@ -11,6 +11,17 @@ ILLUSIONS.push({
     'Thirty seconds of expansion fatigues the neurons tuned to expansion. When the motion stops, their opposite-tuned counterparts briefly dominate, and the imbalance is read as contraction.',
     'The aftereffect contains motion without any change in position: things appear to move, yet nothing goes anywhere. This shows that motion is signalled by dedicated detectors rather than computed from tracked positions.',
   ],
+  ru: {
+    title: 'Спиральное последействие',
+    credit: 'Последействие движения — Addams 1834 (водопад), Plateau 1850 (спираль)',
+    howto: 'Смотрите на красную точку, пока спираль вращается 30 секунд. Когда она остановится, продолжайте смотреть на точку. Затем посмотрите на свою руку или чьё-нибудь лицо.',
+    expect: 'Остановившийся узор кажется текущим в обратную сторону — сжимается там, где спираль будто расширялась, — хотя явно остаётся на месте. Тот же дрейф виден на всём, на что вы посмотрите дальше, 5–15 секунд. Тестовый узор чередуется: застывшая спираль и каменная текстура.',
+    why: [
+      'Движение кодируется популяциями нейронов, избирательных к направлению (в V1 и области MT). Неподвижная сцена вызывает сбалансированный ответ нейронов, настроенных на противоположные направления, и это считывается как «движения нет».',
+      'Тридцать секунд расширения утомляют нейроны, настроенные на расширение. Когда движение останавливается, ненадолго преобладают их противоположно настроенные партнёры, и этот дисбаланс считывается как сжатие.',
+      'В последействии есть движение без изменения положения: всё кажется движущимся, но никуда не сдвигается. Это показывает, что движение сигнализируют специальные детекторы, а не вычисление по отслеживаемым положениям.',
+    ],
+  },
 
   mount(stage) {
     const ADAPT = 30, TEST = 15;          // seconds
@@ -69,8 +80,8 @@ ILLUSIONS.push({
       ctx.stroke();
 
       status.set(adapting
-        ? `Adapting — keep looking at the dot · ${Math.ceil(ADAPT - tc)} s`
-        : `Stopped — keep looking at the dot · ${Math.ceil(ADAPT + TEST - tc)} s`);
+        ? tr(`Adapting — keep looking at the dot · ${Math.ceil(ADAPT - tc)} s`, `Адаптация — смотрите на точку · ${Math.ceil(ADAPT - tc)} с`)
+        : tr(`Stopped — keep looking at the dot · ${Math.ceil(ADAPT + TEST - tc)} s`, `Остановка — смотрите на точку · ${Math.ceil(ADAPT + TEST - tc)} с`));
     });
 
     return () => { stop(); status.remove(); view.destroy(); };
