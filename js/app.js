@@ -15,6 +15,7 @@
     en: { howto: 'How to view', expect: 'What happens', controls: 'Controls', why: 'Why it happens' },
     ru: { howto: 'Задание', expect: 'Что произошло', controls: 'Управление', why: 'Почему так' },
   };
+  const EAR_LABELS = { en: { howto: 'How to listen' }, ru: { howto: 'Как слушать' } };
 
   let current = -1;
   let cleanup = null;
@@ -100,7 +101,8 @@
     $('expect').textContent = text.expect;
     const lang = langOf(il);
     stage.lang = $('panel').lang = lang;
-    for (const k in LABELS[lang]) $(k + '-h').textContent = LABELS[lang][k];
+    const labels = { ...LABELS[lang], ...(sectionOf(il) === 'ear' && EAR_LABELS[lang]) };
+    for (const k in labels) $(k + '-h').textContent = labels[k];
     // Gated illusions keep the outcome hidden until the module calls reveal().
     $('expect-wrap').hidden = $('why').hidden = !!il.gated;
     $('why').open = false;

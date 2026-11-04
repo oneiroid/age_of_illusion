@@ -161,3 +161,72 @@ function h(tag, props, ...children) {
   }
   return node;
 }
+
+/* Theme colour from a Waking Room token, for drawing UI on a canvas: cssVar('--lamp'). */
+function cssVar(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+/* Sound for the Слух section. Browsers start audio only after a click, so the stage
+   shows a start button until then; onStart(ctx, out) builds the graph into `out`.
+   Adds Volume and Pause to `controls`. Pause suspends the context, so ctx.currentTime
+   stops with it. destroy() fades out and closes the context.
+   sound.ctx is null until the click. */
+function createSound(stage, controls, { note, onStart }) {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  const sound = { ctx: null, out: null, paused: false };
+  let volume = 0.4, master = null;
+  const gain = v => 0.6 * v * v;   // perceptual taper, capped below full scale
+
+  const btn = h('button', { type: 'button', className: 'wr-btn wr-btn-curtain', onclick: start }, tr('Listen', 'Слушать'));
+  const gate = h('div', { className: 'sound-gate' }, btn, note && h('p', { className: 'sound-gate-note' }, note));
+  if (!AC) {
+    btn.disabled = true;
+    gate.append(h('p', { className: 'sound-gate-note' }, tr('This browser has no Web Audio.', 'В этом браузере нет Web Audio.')));
+  }
+  stage.appendChild(gate);
+
+  addSlider(controls, {
+    label: tr('Volume', 'Громкость'), min: 0, max: 100, value: 40, format: v => v + ' %',
+    onInput: v => {
+      volume = v / 100;
+      if (master) master.gain.setTargetAtTime(gain(volume), sound.ctx.currentTime, 0.05);
+    },
+  });
+  addToggle(controls, {
+    label: tr('Pause', 'Пауза'), value: false,
+    onChange: v => {
+      sound.paused = v;
+      if (sound.ctx) v ? sound.ctx.suspend() : sound.ctx.resume();
+    },
+  });
+
+  function start() {
+    const ctx = new AC();
+    master = ctx.createGain();
+    master.gain.value = 0;
+    // Limiter: protects ears and speakers when several voices line up.
+    const limit = ctx.createDynamicsCompressor();
+    limit.threshold.value = -6;
+    limit.knee.value = 0;
+    limit.ratio.value = 20;
+    limit.attack.value = 0.003;
+    limit.release.value = 0.1;
+    master.connect(limit).connect(ctx.destination);
+    master.gain.setTargetAtTime(gain(volume), ctx.currentTime, 0.1);
+    Object.assign(sound, { ctx, out: master });
+    gate.remove();
+    onStart(ctx, master);
+    if (sound.paused) ctx.suspend(); else ctx.resume();
+  }
+
+  sound.destroy = () => {
+    gate.remove();
+    const ctx = sound.ctx;
+    if (!ctx) return;
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.setTargetAtTime(0, ctx.currentTime, 0.02);
+    setTimeout(() => ctx.close(), 150);
+  };
+  return sound;
+}

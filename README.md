@@ -27,6 +27,15 @@ Demos of cognition rather than vision. The outcome and explanation stay hidden u
 | 14 | Кто начал? (Who started it?) | new design; noise in the iterated prisoner's dilemma: Molander 1985, Wu & Axelrod 1995; Pronin, Lin & Ross 2002 | 30 rounds against tit-for-tat over a channel that turns two cooperations into defections (bot → player early, player → bot later); blame ratings from inside, then three records rated from outside, one of them the player's own |
 | 15 | Твой принцип (Your principle) | new design on cases by Foot, Thomson, Kamm; Cushman, Young & Hauser 2006; Hauser et al. 2007; Greene et al. 2009 | pick a principle, judge 10 trolley cases built as one-feature pairs; answers checked against 8 principles; a revised principle is tested on a reserve case it is predicted to get wrong (up to 3 times) |
 
+### Слух (Hearing)
+
+Sound is synthesised live with Web Audio; nothing is downloaded. A Listen button starts it, since browsers allow sound only after a click.
+
+| # | Illusion | Source | Type |
+|---|----------|--------|------|
+| 16 | Endless Staircase | Shepard 1964; Risset 1969 | interactive: steps or glide, direction, speed, bell width; speakers or headphones |
+| 17 | Melody in the Noise | Cramer & Huggins 1958; Durlach 1963; Milne et al. 2021 | interactive: tunes, keys, same noise in both ears; headphones only |
+
 See also [`twophase/`](twophase/): a simulation of the DeF Two-Phase Law.
 
 ## Run
@@ -45,7 +54,7 @@ The EN / RU switcher in the sidebar sets the language of the interface and the v
 
 - `design/waking-room/` — the Waking Room design system (tokens, components, brand book); see `CLAUDE.md`
 - `css/style.css` — app styles, built only from Waking Room tokens
-- `js/core.js` — registry, HiDPI canvas, animation loop, slider helper
+- `js/core.js` — registry, HiDPI canvas, animation loop, slider helper, sound helper (`createSound`: Listen button, volume, pause, limiter)
 - `js/illusions/*.js` — one file per illusion; each pushes `{ id, title, credit, howto, expect, why, mount(stage, controls) }` onto `ILLUSIONS` and returns a cleanup function from `mount`
   (optional `section`, `lang`, `gated`; see the comment in `core.js`)
 - `js/mind/*.js` — models behind the Mind demos

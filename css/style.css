@@ -409,6 +409,72 @@ kbd {
 .pr-pair.diff b { color: var(--text); font-weight: 600; }
 .pr-actions { display: flex; justify-content: center; gap: var(--space-12); }
 
+/* ---------- Слух ---------- */
+
+.sound-gate {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-12);
+  padding: var(--space-24);
+  text-align: center;
+}
+
+.sound-gate .wr-btn { min-width: 160px; }
+.sound-gate-note { max-width: 40ch; margin: 0; padding: var(--space-4) var(--space-12); background: var(--background); color: var(--text-muted); font: 400 14px/20px var(--font-text); }
+
+.ear {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--background);
+}
+
+.ear-plot { position: relative; flex: 1; min-height: 0; }
+
+.ear-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: var(--space-16) var(--space-24);
+  padding: var(--space-16) var(--space-24) var(--space-24);
+  border-top: 1px solid var(--border);
+}
+
+.ear-keys { display: flex; gap: var(--space-4); }
+
+.ear-key {
+  width: 40px;
+  height: 96px;
+  padding: 0 0 var(--space-8);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-0);
+  background: var(--text);
+  color: var(--background);
+  font: 400 13px/20px var(--font-mono);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+}
+
+.ear-key.on { background: var(--lamp); border-color: var(--lamp); box-shadow: var(--lamp-glow); }
+
+.ear-tunes { display: grid; gap: var(--space-8); }
+.ear-tunes .wr-btn { min-width: 180px; }
+
+@media (max-width: 600px) {
+  .ear-key { width: 26px; height: 72px; }
+}
+
 /* ---------- side panel ---------- */
 
 .panel {
