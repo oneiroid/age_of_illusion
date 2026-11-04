@@ -29,12 +29,15 @@ Demos of cognition rather than vision. The outcome and explanation stay hidden u
 
 ### Слух (Hearing)
 
-Sound is synthesised live with Web Audio; nothing is downloaded. A Listen button starts it, since browsers allow sound only after a click.
+Sound is synthesised live with Web Audio; nothing is downloaded. A click starts it, since browsers allow sound only after one. Tritone Paradox, Octave Illusion and Speech to Song hide the outcome until the end, like the Разум demos.
 
 | # | Illusion | Source | Type |
 |---|----------|--------|------|
 | 16 | Endless Staircase | Shepard 1964; Risset 1969 | interactive: steps or glide, direction, speed, bell width; speakers or headphones |
-| 17 | Melody in the Noise | Cramer & Huggins 1958; Durlach 1963; Milne et al. 2021 | interactive: tunes, keys, same noise in both ears; headphones only |
+| 17 | Tritone Paradox | Deutsch 1986, 1991; Deutsch, Henthorn & Dolson 2004 | 24 Shepard-tone pairs a tritone apart, up or down; result: notes heard as higher on a circle, peak and consistency. Earlier results kept on the device (localStorage `tritone-log`) |
+| 18 | Melody in the Noise | Cramer & Huggins 1958; Durlach 1963; Milne et al. 2021 | interactive: tunes, keys, band width, same noise in both ears; headphones only |
+| 19 | Octave Illusion | Deutsch 1974; Deutsch & Roll 1976 | headphones only; what do you hear, before and after the channels are swapped; then what each ear gets, swap, tone length |
+| 20 | Speech to Song | Deutsch 1995; Deutsch, Henthorn & Lapidis 2011; Tierney et al. 2013 | records one phrase from the microphone (stays in the tab); speech–song rating before and after ten repetitions; shift each repeat, pause length |
 
 See also [`twophase/`](twophase/): a simulation of the DeF Two-Phase Law.
 

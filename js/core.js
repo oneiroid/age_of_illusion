@@ -170,10 +170,12 @@ function cssVar(name) {
 /* Sound for the Слух section. Browsers start audio only after a click, so the stage
    shows a start button until then; onStart(ctx, out) builds the graph into `out`.
    Adds Volume and Pause to `controls`; with stereoCheck, also a button that beeps in the
-   left ear, then the right, for illusions that need two separate ears. Pause suspends the context, so ctx.currentTime
+   left ear, then the right, for illusions that need two separate ears.
+   gate: false skips the start button: the module calls sound.ensure() from its own click
+   handler instead (null without Web Audio). pause: false leaves out Pause. Pause suspends the context, so ctx.currentTime
    stops with it. destroy() fades out and closes the context.
    sound.ctx is null until the click. */
-function createSound(stage, controls, { note, stereoCheck, onStart }) {
+function createSound(stage, controls, { note, stereoCheck, gate: useGate = true, pause = true, onStart = () => {} }) {
   const AC = window.AudioContext || window.webkitAudioContext;
   const sound = { ctx: null, out: null, paused: false };
   let volume = 0.4, master = null;
@@ -185,7 +187,7 @@ function createSound(stage, controls, { note, stereoCheck, onStart }) {
     btn.disabled = true;
     gate.append(h('p', { className: 'sound-gate-note' }, tr('This browser has no Web Audio.', 'В этом браузере нет Web Audio.')));
   }
-  stage.appendChild(gate);
+  if (useGate) stage.appendChild(gate);
 
   addSlider(controls, {
     label: tr('Volume', 'Громкость'), min: 0, max: 100, value: 40, format: v => v + ' %',
@@ -194,25 +196,29 @@ function createSound(stage, controls, { note, stereoCheck, onStart }) {
       if (master) master.gain.setTargetAtTime(gain(volume), sound.ctx.currentTime, 0.05);
     },
   });
-  addToggle(controls, {
-    label: tr('Pause', 'Пауза'), value: false,
-    onChange: v => {
-      sound.paused = v;
-      if (sound.ctx) v ? sound.ctx.suspend() : sound.ctx.resume();
-    },
-  });
+  if (pause) {
+    addToggle(controls, {
+      label: tr('Pause', 'Пауза'), value: false,
+      onChange: v => {
+        sound.paused = v;
+        if (sound.ctx) v ? sound.ctx.suspend() : sound.ctx.resume();
+      },
+    });
+  }
 
   if (stereoCheck) {
     addButton(controls, {
       label: tr('Left, then right', 'Слева, затем справа'),
-      onClick: () => {
-        if (!AC) return;
-        if (!sound.ctx) start();
-        beep(0, 0.1);
-        beep(1, 0.7);
-      },
+      onClick: () => sound.checkEars(),
     });
   }
+
+  // Beep in the left ear, then the right.
+  sound.checkEars = () => {
+    if (!sound.ensure()) return;
+    beep(0, 0.1);
+    beep(1, 0.7);
+  };
 
   // Short tone in one channel only (0 left, 1 right), `at` seconds from now.
   function beep(channel, at) {
@@ -247,6 +253,11 @@ function createSound(stage, controls, { note, stereoCheck, onStart }) {
     onStart(ctx, master);
     if (sound.paused) ctx.suspend(); else ctx.resume();
   }
+
+  sound.ensure = () => {
+    if (!sound.ctx && AC) start();
+    return sound.ctx;
+  };
 
   sound.destroy = () => {
     gate.remove();
