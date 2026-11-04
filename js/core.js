@@ -169,10 +169,11 @@ function cssVar(name) {
 
 /* Sound for the Слух section. Browsers start audio only after a click, so the stage
    shows a start button until then; onStart(ctx, out) builds the graph into `out`.
-   Adds Volume and Pause to `controls`. Pause suspends the context, so ctx.currentTime
+   Adds Volume and Pause to `controls`; with stereoCheck, also a button that beeps in the
+   left ear, then the right, for illusions that need two separate ears. Pause suspends the context, so ctx.currentTime
    stops with it. destroy() fades out and closes the context.
    sound.ctx is null until the click. */
-function createSound(stage, controls, { note, onStart }) {
+function createSound(stage, controls, { note, stereoCheck, onStart }) {
   const AC = window.AudioContext || window.webkitAudioContext;
   const sound = { ctx: null, out: null, paused: false };
   let volume = 0.4, master = null;
@@ -200,6 +201,33 @@ function createSound(stage, controls, { note, onStart }) {
       if (sound.ctx) v ? sound.ctx.suspend() : sound.ctx.resume();
     },
   });
+
+  if (stereoCheck) {
+    addButton(controls, {
+      label: tr('Left, then right', 'Слева, затем справа'),
+      onClick: () => {
+        if (!AC) return;
+        if (!sound.ctx) start();
+        beep(0, 0.1);
+        beep(1, 0.7);
+      },
+    });
+  }
+
+  // Short tone in one channel only (0 left, 1 right), `at` seconds from now.
+  function beep(channel, at) {
+    const ctx = sound.ctx, t = ctx.currentTime + at;
+    const osc = ctx.createOscillator(), env = ctx.createGain(), merge = ctx.createChannelMerger(2);
+    osc.frequency.value = 880;
+    env.gain.setValueAtTime(0, t);
+    env.gain.linearRampToValueAtTime(0.3, t + 0.01);
+    env.gain.setValueAtTime(0.3, t + 0.3);
+    env.gain.linearRampToValueAtTime(0, t + 0.32);
+    osc.connect(env).connect(merge, 0, channel);
+    merge.connect(master);
+    osc.start(t);
+    osc.stop(t + 0.35);
+  }
 
   function start() {
     const ctx = new AC();
